@@ -9,9 +9,9 @@
 {% block content %}
   <h1>Catalog</h1>
   <p class="important">Welcome to the Catalog Screen.</p>
-    {% if data %}
-        {% for category in data %}
-            <p>{{category}}</p>
+    {% if categories %}
+        {% for category in categories %}
+            <p>{{category.name}}</p>
         {% endfor %}
     {% endif %}
 {% endblock %}
