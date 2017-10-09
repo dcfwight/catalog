@@ -7,11 +7,11 @@
   </style>
 {% endblock %}
 {% block content %}
-  <h1>Category</h1>
-  <p class="important">Welcome to the Category Screen.</p>
-    {% if category %}
-        
-        <p>{{category}}</p>
-        
-    {% endif %}
+  {% if category %}
+    <h1>{{category}}</h1>
+    
+    {% for item in data %}
+        <p>{{item}}</p>
+    {% endfor %}    
+{% endif %}
 {% endblock %}
