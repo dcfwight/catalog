@@ -1,6 +1,23 @@
 from flask import Flask, jsonify, render_template, request, url_for
+import pprint as pp
 
 app = Flask(__name__)
+
+dummy_data = {'soccer':{
+                'balls': 'round things that you can kick',
+                'nets': 'stringy things that catch balls'},
+              'rugby': {
+                'balls': 'oval things that you can carry OR kick',
+                'boots': 'heavy, leathery things you wear on your feet'
+              },
+              'snowboarding': {
+                'goggles': 'protective screen for your eyes',
+                'snowboard': 'Best for any terrain and condition. All-mountain snowboards blah '
+              }
+              }
+
+
+
 
 @app.route('/', methods=['GET'])
 @app.route('/catalog', methods=['GET'])
