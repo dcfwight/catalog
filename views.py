@@ -25,10 +25,6 @@ def index():
 def login():
     return render_template('login.html')
 
-@app.route('/categories/', methods=['GET'])
-def category():
-    return render_template('category.html', data=dummy_data)
-
 @app.route('/catalog/category/', methods=['GET'])
 def item():
     return render_template('item.html')
