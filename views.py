@@ -17,7 +17,7 @@ dummy_data = {'soccer':{
               }
 
 @app.route('/', methods=['GET'])
-@app.route('/catalog', methods=['GET'])
+@app.route('/catalog/', methods=['GET'])
 def index():
     return render_template('catalog.html', data=dummy_data)
 
@@ -25,9 +25,9 @@ def index():
 def login():
     return render_template('login.html')
 
-@app.route('/catalog/category/', methods=['GET'])
-def item():
-    return render_template('item.html')
+@app.route('/catalog/<string:category>/', methods=['GET'])
+def item(category):
+    return render_template('category.html', category=category)
 
 
 if __name__ == "__main__":
