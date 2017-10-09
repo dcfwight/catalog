@@ -62,11 +62,13 @@ dummy_items = {
 
 @app.route('/', methods=['GET'])
 @app.route('/catalog/', methods=['GET'])
-def showCategories():
+def showCatalog():
 	categories = session.query(Category).order_by(Category.name)
 	for category in categories:
 		pp.pprint(category.serialize)
-	return render_template('catalog.html', categories=categories)
+	items = session.query(Item).all()
+	return render_template('catalog.html', categories=categories,
+							items = items)
 
 @app.route('/createItem/', methods=['POST'])
 def createItem(name, description, category_id, user_id):

@@ -10,8 +10,15 @@
   <h1>Catalog</h1>
   <p class="important">Welcome to the Catalog Screen.</p>
     {% if categories %}
-        {% for category in categories %}
-            <p>{{category.name}}</p>
-        {% endfor %}
+      <h2>Categories</h2>
+      {% for category in categories %}
+        <p>{{category.name}}</p>
+      {% endfor %}
+    {% endif %}
+    {% if items %}
+      <h2>Items</h2>
+      {% for item in items %}
+        <p>{{item.name}}</p>
+      {% endfor %}
     {% endif %}
 {% endblock %}
