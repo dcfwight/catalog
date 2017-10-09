@@ -1,11 +1,11 @@
-from flask import Flask, jsonify, request, url_for
+from flask import Flask, jsonify, render_template, request, url_for
 
 app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 @app.route('/catalog', methods=['GET'])
-def main():
-    return ('Catalog Home page')
+def index():
+    return render_template('index.html')
 
 @app.route('/login', methods=['GET'])
 def login():
