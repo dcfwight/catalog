@@ -16,9 +16,6 @@ dummy_data = {'soccer':{
               }
               }
 
-
-
-
 @app.route('/', methods=['GET'])
 @app.route('/catalog', methods=['GET'])
 def index():
@@ -30,7 +27,9 @@ def login():
 
 @app.route('/categories', methods=['GET'])
 def category():
-    return render_template('category.html')
+    for i in dummy_data:
+        print (i)
+    return render_template('category.html', data=dummy_data)
 
 @app.route('/catalog/item', methods=['GET'])
 def item():

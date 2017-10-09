@@ -7,7 +7,15 @@
   </style>
 {% endblock %}
 {% block content %}
-  <h1>Index</h1>
+  <h1>Categories</h1>
   <p class="important">
     Welcome to the Category Items.
+    {% if data %}
+      <ul class=categories>
+      {% for category in data %}
+      <p
+        <li>{{category}}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
 {% endblock %}
