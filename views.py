@@ -11,6 +11,10 @@ def main():
 def login():
     return ('Login screen requested')
 
+@app.route('/catalog/item', methods=['GET'])
+def item():
+    return('Catalog/item requested')
+
 if __name__ == "__main__":
     app.secret_key='super_secret_key' # Change this to a proper secret key later
     app.debug = True
