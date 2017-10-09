@@ -9,7 +9,7 @@ def index():
 
 @app.route('/login', methods=['GET'])
 def login():
-    return ('Login screen requested')
+    return render_template('login.html')
 
 @app.route('/categories', methods=['GET'])
 def category():
@@ -17,7 +17,7 @@ def category():
 
 @app.route('/catalog/item', methods=['GET'])
 def item():
-    return('Catalog/item requested')
+    return render_template('item.html')
 
 
 if __name__ == "__main__":
