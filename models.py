@@ -53,6 +53,7 @@ class Item(Base):
 	category = relationship(Category)
 	user_id = Column(Integer, ForeignKey('user.id'))
 	user = relationship(User)
+	create_time = Column(Integer)
 
 	@property
 	def serialize(self):
