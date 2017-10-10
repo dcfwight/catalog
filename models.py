@@ -13,6 +13,7 @@ class User(Base):
 	id = Column(Integer, primary_key=True)
 	username = Column(String(32), index=True)
 	password_hash = Column(String(64))
+	email = Column(String(64))
 
 	# hashing is a one-way process - we store the hashed password, and NEVER the actual password.
 	def hash_password(self, password):
@@ -28,7 +29,8 @@ class User(Base):
 		return {
 			'id': self.id,
 			'username' : self.name,
-			'password_has': self.password_hash
+			'password_hash': self.password_hash,
+			'email': self.email
 			}
 
 class Category(Base):
@@ -53,7 +55,7 @@ class Item(Base):
 	category = relationship(Category)
 	user_id = Column(Integer, ForeignKey('user.id'))
 	user = relationship(User)
-	create_time = Column(Integer)
+	edited_time = Column(Integer)
 
 	@property
 	def serialize(self):
@@ -61,7 +63,10 @@ class Item(Base):
 		return {
 			'id': self.id,
 			'name' : self.name,
-			'description': self.description
+			'description': self.description,
+			'edited_time': self.edited_time,
+			'category_id': self.category_id,
+			'user_id': self.user_id
 			}
 
 
