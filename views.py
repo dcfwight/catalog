@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, request, url_for
+from flask import Flask, jsonify, render_template, request, url_for, redirect
 import pprint as pp # for pretty-printing
 # from collections import OrderedDict # to enable sorting on nested dictionaries
 
@@ -25,6 +25,19 @@ def showCatalog():
 	items = session.query(Item).all()
 	return render_template('catalog.html', categories=categories,
 							items = items)
+
+@app.route('/createCategory/', methods = ['POST'])
+def createCategory():
+	print (request.form)
+	if request.method =='POST':
+		category_name = request.form['name']
+		if session.query(Category).filter_by(name = category_name).first():
+			return ('Category already exists')
+		else:
+			newCategory = Category(name=category_name)
+			session.add(newCategory)
+			session.commit()
+	return redirect(url_for('showCatalog'))
 
 @app.route('/createItem/', methods=['POST'])
 def createItem(name, description, category_id, user_id):
