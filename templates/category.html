@@ -8,10 +8,11 @@
 {% endblock %}
 {% block content %}
   {% if category %}
-    <h1>{{category}}</h1>
-    
-    {% for item in data %}
-        <p>{{item}}</p>
-    {% endfor %}    
+    <h1>{{category.name}}</h1>
+    {% if items %}
+      {% for item in items %}
+         <p>{{item.name}}</p>
+      {% endfor %}
+    {% endif %}
 {% endif %}
 {% endblock %}
