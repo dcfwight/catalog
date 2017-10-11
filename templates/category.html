@@ -7,12 +7,14 @@
   </style>
 {% endblock %}
 {% block content %}
-  {% if category %}
-    <h1>{{category.name}}</h1>
+  {% if categories %}
+		{% for category in categories %}
+			<h3>{{category.name}}</h3>
+		{% endfor %}
+	{% endif %}
     {% if items %}
       {% for item in items %}
          <p>{{item.name}}</p>
       {% endfor %}
     {% endif %}
-{% endif %}
 {% endblock %}

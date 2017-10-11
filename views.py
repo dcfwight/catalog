@@ -137,15 +137,15 @@ def login():
 @app.route('/catalog/<string:category>/', methods=['GET'])
 def category_display(category):
 	# print ('category from GET request is {}'.format(category))
-	category_to_show = session.query(Category).filter_by(name = category).first()
+	category_requested = session.query(Category).filter_by(name = category).first()
 	# pp.pprint (category_to_show.serialize)
+	all_categories = session.query(Category).all()
 	items_to_show = session.query(Item)\
-			.filter_by(category_id = category_to_show.id)\
-			.order_by(Item.name).\
-			all()
+			.filter_by(category_id = category_requested.id)\
+			.order_by(Item.name).all()
 	# for item in items_to_show:
 		# pp.pprint (item.serialize)
-	return render_template('category.html', category = category_to_show, \
+	return render_template('category.html', categories = all_categories, \
 				items = items_to_show)
 
 if __name__ == "__main__":
