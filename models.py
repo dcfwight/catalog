@@ -51,7 +51,7 @@ class Item(Base):
 	id = Column(Integer, primary_key=True)
 	name = Column(String(32), index=True)
 	description = Column(String(1024))
-	category_id = Column(Integer, ForeignKey('category.id'))
+	category_name = Column(String, ForeignKey('category.name'))
 	category = relationship(Category)
 	user_id = Column(Integer, ForeignKey('user.id'))
 	user = relationship(User)
@@ -66,6 +66,7 @@ class Item(Base):
 			'description': self.description,
 			'edited_time': self.edited_time,
 			'category_id': self.category_id,
+			'category_name': self.category_name,
 			'user_id': self.user_id
 			}
 
