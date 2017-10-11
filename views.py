@@ -134,7 +134,7 @@ def deleteItem(id):
 def login():
 	return render_template('login.html')
 
-@app.route('/catalog/<string:category>/', methods=['GET'])
+@app.route('/catalog/<string:category>/items', methods=['GET'])
 def category_display(category):
 	# print ('category from GET request is {}'.format(category))
 	category_requested = session.query(Category).filter_by(name = category).first()
