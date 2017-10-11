@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, render_template, request, url_for, redirect
+from flask import Flask, flash, jsonify, redirect, render_template,\
+		request, url_for
 import pprint as pp # for pretty-printing
 # from collections import OrderedDict # to enable sorting on nested dictionaries
 
@@ -23,7 +24,7 @@ def showCatalog():
 		pp.pprint(category.serialize)
 	items = session.query(Item).all()
 	return render_template('catalog.html', categories=categories,
-							items = items)
+													items = items)
 
 @app.route('/createCategory/', methods = ['POST'])
 def createCategory():
@@ -69,8 +70,8 @@ def editCategory(id):
 		session.add(category_to_edit)
 		session.commit(category_to_edit)
 		return redirect(url_for('showCatalog'))
-	
-@app.route('/editItem/<int:id>', methods=['POST'])	
+
+@app.route('/editItem/<int:id>', methods=['POST'])
 def editItem(id):
 	edited_time = int(time.time())
 	if request.method=='POST':
@@ -95,15 +96,28 @@ def editItem(id):
 
 @app.route('/deleteCategory/<int:id>', methods = ['GET'])
 def deleteCategory(id):
-    category_to_delete = session.query(Category).filter_by(id=id).first()
-    session.delete(category_to_delete)
-    # We also need to delete the items associated with the category
-    items_to_delete = session.query(Item).filter_by(category_id = id).all()
-    if (items_to_delete):
-        for item in items_to_delete:
-            session.delete(item)    
-    session.commit()
-    return redirect(url_for('showCatalog'))
+	category_to_delete = session.query(Category).filter_by(id=id).first()
+	session.delete(category_to_delete)
+	# We also need to delete the items associated with the category
+	items_to_delete = session.query(Item).filter_by(category_id = id).all()
+	if (items_to_delete):
+		for item in items_to_delete:
+			session.delete(item)
+	session.commit()
+	flash('{} deleted'.format(category_to_delete.name))
+	return redirect(url_for('showCatalog'))
+
+@app.route('/deleteItem/<int:id>', methods = ['GET'])
+def deleteItem(id):
+	item_to_delete = session.query(Item).filter_by(id = id).first()
+	item_category_id = item_to_delete.category_id
+	# print ('item_to_delete.category_id is: {}'.format(item_to_delete.category_id))
+	category = session.query(Category).filter_by(id = item_category_id).one()
+	# print (category.serialize)
+	session.delete(item_to_delete)
+	session.commit()
+	flash('{} deleted'.format(item_to_delete.name))
+	return redirect(url_for('category_display', category = category.name))
 
 @app.route('/login/', methods=['GET'])
 def login():
@@ -115,13 +129,13 @@ def category_display(category):
 	category_to_show = session.query(Category).filter_by(name = category).first()
 	# pp.pprint (category_to_show.serialize)
 	items_to_show = session.query(Item)\
-		.filter_by(category_id = category_to_show.id)\
-		.order_by(Item.name).\
-		all()
+			.filter_by(category_id = category_to_show.id)\
+			.order_by(Item.name).\
+			all()
 	# for item in items_to_show:
 		# pp.pprint (item.serialize)
-	return render_template('category.html', category = category_to_show,
-						   items = items_to_show)
+	return render_template('category.html', category = category_to_show, \
+				items = items_to_show)
 
 if __name__ == "__main__":
 	# createItem('goggles','protective eyewear', 3, 2)
