@@ -156,10 +156,8 @@ def item_display(category, item):
 	print (category_selected.name)
 	for item in item_selected:
 		if item.category_id == category_selected.id:
-			print (item.name)
-			return jsonify(item.serialize)
-		
-	
+			# print (item.name)
+			return render_template('item.html', item = item)
 
 if __name__ == "__main__":
 	# createItem('goggles','protective eyewear', 3, 2)
