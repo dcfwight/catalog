@@ -148,6 +148,19 @@ def category_display(category):
 	return render_template('category.html', categories = all_categories, \
 				selected_category = category_requested.name, items = items_to_show)
 
+@app.route('/catalog/<string:category>/<string:item>', methods=['GET'])
+def item_display(category, item):
+	# first get the item. Bear in mind there may be >1 e.g. rugby ball, soccer ball
+	item_selected = session.query(Item).filter_by(name=item).all()
+	category_selected = session.query(Category).filter_by(name=category).first()
+	print (category_selected.name)
+	for item in item_selected:
+		if item.category_id == category_selected.id:
+			print (item.name)
+			return jsonify(item.serialize)
+		
+	
+
 if __name__ == "__main__":
 	# createItem('goggles','protective eyewear', 3, 2)
 	app.secret_key='super_secret_key' # Change this to a proper secret key later
