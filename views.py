@@ -82,6 +82,7 @@ def editCategory(id):
 		return redirect(url_for('showCatalog'))
 
 @app.route('/editItem/<int:id>', methods=['POST'])
+# will want to combine this into one route, with GET and POST items maybe?
 def editItem(id):
 	edited_time = int(time.time())
 	if request.method=='POST':
@@ -102,8 +103,10 @@ def editItem(id):
 			item_to_edit.edited_time = edited_time
 		session.add(item_to_edit)
 		session.commit()
+		parent_category = session.query(Category).filter_by(id = item_to_edit.category_id).first()
 		flash('{} edited'.format(item_to_edit.name))
-		return ('item with id: {} has been edited'.format(item_to_edit.id))
+		return redirect(url_for('item_display', category=parent_category.name,
+														item = item_to_edit.name))
 
 @app.route('/deleteCategory/<int:id>', methods = ['GET', 'POST'])
 def deleteCategory(id):
