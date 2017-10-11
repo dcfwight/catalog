@@ -20,11 +20,16 @@ app = Flask(__name__)
 @app.route('/catalog/', methods=['GET'])
 def showCatalog():
 	categories = session.query(Category).order_by(Category.name)
-	for category in categories:
-		pp.pprint(category.serialize)
-	items = session.query(Item).all()
+	# for category in categories:
+		# pp.pprint(category.serialize)
+	items = session.query(Item).order_by(Item.edited_time).limit(5)
+	latest_items = []
+	for item in items:
+		latest_items.append(item.serialize)
+	for item in latest_items:
+		item['category_name'] = session.query(Category).filter_by(id = item['category_id']).one().name
 	return render_template('catalog.html', categories=categories,
-													items = items)
+													latest_items = latest_items)
 
 @app.route('/createCategory/', methods = ['GET','POST'])
 def createCategory():

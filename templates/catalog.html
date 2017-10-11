@@ -15,10 +15,10 @@
         <p>{{category.name}}</p>
       {% endfor %}
     {% endif %}
-    {% if items %}
+    {% if latest_items %}
       <h2>Items</h2>
-      {% for item in items %}
-        <p>{{item.name}}</p>
+      {% for item in latest_items %}
+        <p>{{item.name}}: <i>({{item.category_name}})</i></p>
       {% endfor %}
     {% endif %}
 {% endblock %}
