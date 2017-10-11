@@ -262,7 +262,8 @@ def gconnect():
 		createUser(login_session)
 	login_session['user_id'] = userId
 
-	print(login_session)
+	print('login_session is: ')
+	pp.pprint(login_session)
 	output = ''
 	output += '<h1>Welcome, '
 	output += login_session['username']
@@ -273,7 +274,7 @@ def gconnect():
 			radius: 150px;-webkit-border-radius: 150px;-moz-border-radius:150px;">'
 	flash("you are now logged in as %s"%login_session['username'])
 	print (output)
-	return output
+	return jsonify(output)
 
 
 #DISCONNECT - Revoke a current user's token and reset their login_sesion
@@ -290,7 +291,7 @@ def gdisconnect():
 	# Execute HTTP GET request to REVOKE current token
 	access_token = credentials.access_token
 	# following url is googles url for revoking tokens
-	url = "https://accounts.google.com/o/oauth2/revoke?token=%s" %access_token
+	url = "https://accounts.google.com/o/oauth2/revoke?token={}".format(access_token)
 	h = httplib2.Http()
 	result = h.request(url, 'GET') [0]
 
@@ -319,8 +320,12 @@ def getUserID(email):
     except:
         return None
 
+def getUserInfo(user_id):
+    user = session.query(User).filter_by(id = user_id).one()
+    return user
+
 def createUser(login_session):
-    newUser = User(name = login_session['username'], email =
+    newUser = User(username = login_session['username'], email =
                    login_session['email'], picture = login_session['picture'])
     session.add(newUser)
     session.commit()
