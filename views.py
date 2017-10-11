@@ -146,7 +146,11 @@ def deleteItem(id):
 
 @app.route('/login/', methods=['GET'])
 def login():
-	return render_template('login.html')
+	state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+							for x in range(32))
+	login_session['state'] = state
+	# print ('state is {}'.format(state))
+	return render_template('login.html', state=login_session['state'])
 
 @app.route('/catalog/<string:category>/items', methods=['GET'])
 def category_display(category):
