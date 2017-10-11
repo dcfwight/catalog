@@ -1,0 +1,23 @@
+	{% extends "layout.html" %}
+{% block title %}Catalog{% endblock %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+    .important { color: #336699; }
+  </style>
+{% endblock %}
+{% block content %}
+  <h1>You are about to delete a Category!</h1>
+  <p class="important">Are you sure you want to delete {{category.name.title()}}?</p>
+	{% if items %}
+		<p>There are the following items in that category that will also be deleted</p>
+		<ul>
+			{% for i in items %}
+				<li>{{i.name}}</li>
+			{% endfor %}
+		</ul>
+	{% endif %}
+	<form action="{{url_for('deleteCategory', id=category.id)}}", method = 'post'>
+		<input type="submit" value="Submit">
+	</form>
+{% endblock %}
