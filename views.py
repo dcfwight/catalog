@@ -97,6 +97,7 @@ def editItem(id):
 			item_to_edit.edited_time = edited_time
 		session.add(item_to_edit)
 		session.commit()
+		flash('{} edited'.format(item_to_edit.name))
 		return ('item with id: {} has been edited'.format(item_to_edit.id))
 
 @app.route('/deleteCategory/<int:id>', methods = ['GET'])
