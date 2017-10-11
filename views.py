@@ -93,7 +93,17 @@ def editItem(id):
 		session.commit()
 		return ('item with id: {} has been edited'.format(item_to_edit.id))
 
-
+@app.route('/deleteCategory/<int:id>', methods = ['GET'])
+def deleteCategory(id):
+    category_to_delete = session.query(Category).filter_by(id=id).first()
+    session.delete(category_to_delete)
+    # We also need to delete the items associated with the category
+    items_to_delete = session.query(Item).filter_by(category_id = id).all()
+    if (items_to_delete):
+        for item in items_to_delete:
+            session.delete(item)    
+    session.commit()
+    return redirect(url_for('showCatalog'))
 
 @app.route('/login/', methods=['GET'])
 def login():
