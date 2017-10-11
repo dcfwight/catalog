@@ -1,5 +1,9 @@
 from flask import Flask, flash, jsonify, redirect, render_template,\
 		request, url_for
+from flask import session as login_session
+# login_session is a dictionary that stores users login details for the duration of their session
+
+import random, string
 import pprint as pp # for pretty-printing
 # from collections import OrderedDict # to enable sorting on nested dictionaries
 
