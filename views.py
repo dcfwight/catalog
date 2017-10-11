@@ -118,17 +118,20 @@ def deleteCategory(id):
 	flash('{} deleted'.format(category_to_delete.name))
 	return redirect(url_for('showCatalog'))
 
-@app.route('/deleteItem/<int:id>', methods = ['GET'])
+@app.route('/deleteItem/<int:id>', methods = ['GET', 'POST'])
 def deleteItem(id):
 	item_to_delete = session.query(Item).filter_by(id = id).first()
-	item_category_id = item_to_delete.category_id
-	# print ('item_to_delete.category_id is: {}'.format(item_to_delete.category_id))
-	category = session.query(Category).filter_by(id = item_category_id).one()
-	# print (category.serialize)
-	session.delete(item_to_delete)
-	session.commit()
-	flash('{} deleted'.format(item_to_delete.name))
-	return redirect(url_for('category_display', category = category.name))
+	if request.method == 'GET':
+		return render_template('delete.html', item = item_to_delete)
+	elif request.method == 'POST':
+		item_category_id = item_to_delete.category_id
+		# print ('item_to_delete.category_id is: {}'.format(item_to_delete.category_id))
+		category = session.query(Category).filter_by(id = item_category_id).one()
+		# print (category.serialize)
+		session.delete(item_to_delete)
+		session.commit()
+		flash('{} deleted'.format(item_to_delete.name))
+		return redirect(url_for('category_display', category = category.name))
 
 @app.route('/login/', methods=['GET'])
 def login():
