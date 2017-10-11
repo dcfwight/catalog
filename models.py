@@ -11,9 +11,10 @@ Base = declarative_base()
 class User(Base):
 	__tablename__ = 'user'
 	id = Column(Integer, primary_key=True)
-	username = Column(String(32), index=True)
+	username = Column(String(256), index=True, nullable=False)
 	password_hash = Column(String(64))
-	email = Column(String(64))
+	email = Column(String(256), nullable=False)
+	picture = Column(String(250))
 
 	# hashing is a one-way process - we store the hashed password, and NEVER the actual password.
 	def hash_password(self, password):
