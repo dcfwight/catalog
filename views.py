@@ -12,6 +12,19 @@ from sqlalchemy.orm import sessionmaker
 from models import Base, User, Category, Item
 import time
 
+from oauth2client.client import flow_from_clientsecrets
+# creates a flow objectfrom clientsecrets JSON file. Stores client Id and other oAuth parameters
+from oauth2client.client import FlowExchangeError
+# this will catch errors when trying to exchange an authorisation code for an access token.
+import httplib2 # comprehensive http clientlibrary in python
+import json
+from flask import make_response #converts the return value from a function into a real response object to send to client
+import requests
+
+GOOGLE_CLIENT_ID = json.loads(
+	open('google_client_secret.json','r').read())['web']['client_id']
+print (GOOGLE_CLIENT_ID)
+
 engine = create_engine('sqlite:///catalog.db')
 Base.metadata.bind = engine
 
@@ -199,6 +212,6 @@ def categoryItemsJSON(category):
 
 if __name__ == "__main__":
 	# createItem('goggles','protective eyewear', 3, 2)
-	app.secret_key='super_secret_key' # Change this to a proper secret key later
+	app.secret_key='super_secret_key_129847' # Required for sessions
 	app.debug = True
 	app.run(host = '0.0.0.0', port = 5000)
