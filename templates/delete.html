@@ -1,4 +1,4 @@
-% extends "layout.html" %}
+{% extends "layout.html" %}
 {% block title %}Catalog{% endblock %}
 {% block head %}
   {{ super() }}
@@ -8,5 +8,8 @@
 {% endblock %}
 {% block content %}
   <h1>Delete Item</h1>
-  <p class="important">Are you sure you want to delete?</p>
+  <p class="important">Are you sure you want to delete {{item.name}}?</p>
+	<form action="{{url_for('deleteItem', id=item.id)}}", method = 'post'>
+		<input type="submit" value="Submit">
+	</form>
 {% endblock %}
