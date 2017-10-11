@@ -146,7 +146,7 @@ def category_display(category):
 	# for item in items_to_show:
 		# pp.pprint (item.serialize)
 	return render_template('category.html', categories = all_categories, \
-				items = items_to_show)
+				selected_category = category_requested.name, items = items_to_show)
 
 if __name__ == "__main__":
 	# createItem('goggles','protective eyewear', 3, 2)

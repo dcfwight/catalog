@@ -7,14 +7,19 @@
   </style>
 {% endblock %}
 {% block content %}
-  {% if categories %}
+  <h1>Categories</h1>
+	{% if categories %}
 		{% for category in categories %}
-			<h3>{{category.name}}</h3>
+			<h3>{{category.name.title()}}</h3>
 		{% endfor %}
 	{% endif %}
-    {% if items %}
-      {% for item in items %}
-         <p>{{item.name}}</p>
-      {% endfor %}
-    {% endif %}
+	
+	{% if selected_category %}
+		<h1>{{selected_category.title()}} Items</h1>
+	{% endif %}
+	{% if items %}
+		{% for item in items %}
+			 <p>{{item.name.title()}}</p>
+		{% endfor %}
+	{% endif %}
 {% endblock %}
