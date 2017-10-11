@@ -159,6 +159,13 @@ def item_display(category, item):
 			# print (item.name)
 			return render_template('item.html', item = item)
 
+#--------------------------------------------------------
+# Endpoints
+@app.route('/api/categories', methods = ['GET'])
+def categoriesJSON():
+	categories = session.query(Category).all()
+	return jsonify(CategoryList = [i.serialize for i in categories])
+
 if __name__ == "__main__":
 	# createItem('goggles','protective eyewear', 3, 2)
 	app.secret_key='super_secret_key' # Change this to a proper secret key later
