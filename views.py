@@ -26,17 +26,20 @@ def showCatalog():
 	return render_template('catalog.html', categories=categories,
 													items = items)
 
-@app.route('/createCategory/', methods = ['POST'])
+@app.route('/createCategory/', methods = ['GET','POST'])
 def createCategory():
 	# print (request.form)
-	if request.method =='POST':
+	if request.method =='GET':
+		return redirect(url_for('showCatalog'))
+	elif request.method =='POST':
 		category_name = request.form['name']
 		if session.query(Category).filter_by(name = category_name).first():
-			return ('Category already exists')
+			flash('Category: {} already exits'.format(category_name))
 		else:
 			newCategory = Category(name=category_name)
 			session.add(newCategory)
 			session.commit()
+			flash('{} created'.format(newCategory.name))
 	return redirect(url_for('showCatalog'))
 
 @app.route('/createItem/', methods=['POST'])
@@ -56,6 +59,7 @@ def createItem():
 	newItem.edited_time = int(time.time())
 	session.add(newItem)
 	session.commit()
+	flash('{} created'.format(newItem.name))
 	return jsonify(newItem.serialize)
 
 @app.route('/editCategory/<int:id>', methods = ['POST'])
@@ -69,6 +73,7 @@ def editCategory(id):
 			category_to_edit.name = request.form['name']
 		session.add(category_to_edit)
 		session.commit(category_to_edit)
+		flash('{} edited'.format(category_to_edit.name))
 		return redirect(url_for('showCatalog'))
 
 @app.route('/editItem/<int:id>', methods=['POST'])
