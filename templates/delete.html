@@ -1,0 +1,12 @@
+% extends "layout.html" %}
+{% block title %}Catalog{% endblock %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+    .important { color: #336699; }
+  </style>
+{% endblock %}
+{% block content %}
+  <h1>Delete Item</h1>
+  <p class="important">Are you sure you want to delete?</p>
+{% endblock %}
