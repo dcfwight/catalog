@@ -56,9 +56,20 @@ def createItem():
 	session.add(newItem)
 	session.commit()
 	return jsonify(newItem.serialize)
+
+@app.route('/editCategory/<int:id>', methods = ['POST'])
+def editCategory(id):
+	if request.method == 'POST':
+		print (request.form)
+		category_to_edit = session.query(Category).filter_by(id=id).one()
+		print ('category to edit retrieved from database')
+		pp.pprint(category_to_edit.serialize)
+		if request.form['name']:
+			category_to_edit.name = request.form['name']
+		session.add(category_to_edit)
+		session.commit(category_to_edit)
+		return redirect(url_for('showCatalog'))
 	
-
-
 @app.route('/editItem/<int:id>', methods=['POST'])	
 def editItem(id):
 	edited_time = int(time.time())
@@ -81,6 +92,8 @@ def editItem(id):
 		session.add(item_to_edit)
 		session.commit()
 		return ('item with id: {} has been edited'.format(item_to_edit.id))
+
+
 
 @app.route('/login/', methods=['GET'])
 def login():
