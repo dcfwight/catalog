@@ -171,6 +171,12 @@ def itemsJSON():
 	items = session.query(Item).all()
 	return jsonify(ItemList = [i.serialize for i in items])
 
+@app.route('/api/<string:category>/items/', methods=['GET'])
+def categoryItemsJSON(category):
+	category_selected = session.query(Category).filter_by(name = category).first()
+	category_items = session.query(Item).filter_by(category_id = category_selected.id).all()
+	return jsonify(CategoryItemList = [i.serialize for i in category_items])
+
 if __name__ == "__main__":
 	# createItem('goggles','protective eyewear', 3, 2)
 	app.secret_key='super_secret_key' # Change this to a proper secret key later
