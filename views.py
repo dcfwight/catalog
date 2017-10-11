@@ -105,24 +105,28 @@ def editItem(id):
 		flash('{} edited'.format(item_to_edit.name))
 		return ('item with id: {} has been edited'.format(item_to_edit.id))
 
-@app.route('/deleteCategory/<int:id>', methods = ['GET'])
+@app.route('/deleteCategory/<int:id>', methods = ['GET', 'POST'])
 def deleteCategory(id):
 	category_to_delete = session.query(Category).filter_by(id=id).first()
-	session.delete(category_to_delete)
 	# We also need to delete the items associated with the category
 	items_to_delete = session.query(Item).filter_by(category_id = id).all()
-	if (items_to_delete):
-		for item in items_to_delete:
-			session.delete(item)
-	session.commit()
-	flash('{} deleted'.format(category_to_delete.name))
-	return redirect(url_for('showCatalog'))
+	if request.method == 'GET':
+		return render_template('deleteCategory.html', category = category_to_delete, \
+													 items = items_to_delete)
+	elif request.method == 'POST':
+		session.delete(category_to_delete)
+		if (items_to_delete):
+			for item in items_to_delete:
+				session.delete(item)
+		session.commit()
+		flash('{} deleted'.format(category_to_delete.name))
+		return redirect(url_for('showCatalog'))
 
 @app.route('/deleteItem/<int:id>', methods = ['GET', 'POST'])
 def deleteItem(id):
 	item_to_delete = session.query(Item).filter_by(id = id).first()
 	if request.method == 'GET':
-		return render_template('delete.html', item = item_to_delete)
+		return render_template('deleteItem.html', item = item_to_delete)
 	elif request.method == 'POST':
 		item_category_id = item_to_delete.category_id
 		# print ('item_to_delete.category_id is: {}'.format(item_to_delete.category_id))
