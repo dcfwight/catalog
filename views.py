@@ -296,14 +296,18 @@ def gdisconnect():
 	print ('user attempting to gdisconnect - log out as google user')
 	# only disconnect a connected user.
 	credentials = login_session.get('credentials')
+	print (credentials)
 	if credentials is None:
 		response = make_response(json.dumps('Current user not connected'), 401)
 		response.headers['Content-Type']= 'application/json'
 		return response
 	# Execute HTTP GET request to REVOKE current token
-	access_token = credentials.access_token
+	# access_token = credentials.access_token
+	# previous line no longer relevant, once we fixed the issue (search this
+	# file for comments on Linus Dong to see where it was fixed)
 	# following url is googles url for revoking tokens
-	url = "https://accounts.google.com/o/oauth2/revoke?token={}".format(access_token)
+	url = "https://accounts.google.com/o/oauth2/revoke?token={}".format(credentials)
+	# url = "https://accounts.google.com/o/oauth2/revoke?token={}".format(access_token)
 	h = httplib2.Http()
 	result = h.request(url, 'GET') [0]
 
