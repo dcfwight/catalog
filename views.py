@@ -313,21 +313,18 @@ def gdisconnect():
 
     if result['status'] == '200':
         # Reset the user's session
-        # These used to be deleted here, but now they are deleted in the generic disconnect function
-        del login_session['credentials']
-        del login_session['gplus_id']
-        del login_session['username']
-        del login_session['email']
-        del login_session['picture']
-
-        response = make_response(json.dumps('Successfully disconnected'), 200)
-        response.headers['Content-Type']= 'application/json'
-        return response
+        # NB deletion of login_session info is handled in disconnect()
+        
+        # response = make_response(json.dumps('Successfully disconnected'), 200)
+        # response.headers['Content-Type']= 'application/json'
+        # return response
+        return ['Successfully disconnected', 200]
     else:
         # for whatever reason, the given token was invalid
-        response = make_response(json.dumps('Failed to revoke token for given user'), 400)
-        response.headers['Content-Type']= 'application/json'
-        return response
+        # response = make_response(json.dumps('Failed to revoke token for given user'), 400)
+        # response.headers['Content-Type']= 'application/json'
+        # return response
+        return ['Failed to revoke token for given user', 400]
 
 ################################################################################
 ## FACEBOOK connection ##
@@ -410,16 +407,37 @@ def fbconnect():
 # Note that this is now supplemented by the generic /disconnect function
 def fbdisconnect():
     facebook_id = login_session['facebook_id']
-    url = 'https://graph.facebook.com/%s/permissions' % facebook_id
+    url = 'https://graph.facebook.com/{}/permissions'.format( facebook_id)
     h = httplib2.Http()
-    result = h.request(url, 'DELETE') [1]
-    # the deletions used to be coded here, but are now done in the generic /disconnect function
-    # del login_session['username']
-    # del login_session['email']
-    # del login_session['picture']
-    # del login_session['user_id']
-    # del login_session['facebook_id']
+    result = h.request(url, 'DELETE') [1].decode()
+    pp.pprint (result)
+    # NB the deletions for lognin_session are all handled in disconnect() 
     return "you have been logged out"
+
+@app.route('/disconnect')
+def disconnect():
+    if 'provider' in login_session:
+        if login_session['provider'] == 'google':
+            response = gdisconnect()
+            if response[1] == 400:
+                print (response[0])
+            del login_session['gplus_id']
+            del login_session['credentials']
+        if login_session['provider'] == 'facebook':
+            response = fbdisconnect()
+            print (response)
+            del login_session['facebook_id']
+        del login_session['username']
+        del login_session['email']
+        del login_session['picture']
+        del login_session['user_id']
+        del login_session['provider']
+        flash("You have been successfully logged out")
+        return redirect(url_for('showCatalog'))
+    else:
+        flash("You were not logged in to begin with!")
+        return redirect(url_for('showCatalog'))    
+
 
 def getUserID(email):
     try:
