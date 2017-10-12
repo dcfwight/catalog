@@ -1,24 +1,24 @@
 {% extends "layout.html" %}
 {% block title %}Catalog{% endblock %}
 {% block head %}
-  {{ super() }}
-  <style type="text/css">
-    .important { color: #336699; }
-  </style>
+    {{ super() }}
+    <style type="text/css">
+        .important { color: #336699; }
+    </style>
 {% endblock %}
 {% block content %}
-  <h1>Catalog</h1>
-  <p class="important">Welcome to the Catalog Screen.</p>
+    <h1>Catalog</h1>
+    <p class="important">Welcome to the Catalog Screen.</p>
     {% if categories %}
-      <h2>Categories</h2>
-      {% for category in categories %}
-        <p>{{category.name}}</p>
-      {% endfor %}
+        <h2>Categories</h2>
+        {% for category in categories %}
+            <p>{{category.name}}</p>
+        {% endfor %}
     {% endif %}
     {% if latest_items %}
-      <h2>Items</h2>
-      {% for item in latest_items %}
-        <p>{{item.name}}: <i>({{item.category_name}})</i></p>
-      {% endfor %}
+        <h2>Items</h2>
+        {% for item in latest_items %}
+            <p>{{item.name}}: <i>({{item.category_name}})</i></p>
+        {% endfor %}
     {% endif %}
 {% endblock %}
