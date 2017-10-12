@@ -277,21 +277,17 @@ def gconnect():
 
 	print('login_session is: ')
 	print(login_session)
-	# output = ''
-	# output += '<h1>Welcome, '
-	# output += login_session['username']
-	# output += '!</h1>'
-	# output += '<img src="'
-	# output += login_session['picture']
-	# output += '"style="width: 300px; height: 300px; border-\
-	# 		radius: 150px;-webkit-border-radius: 150px;-moz-border-radius:150px;">'
-	# flash("you are now logged in as {}".format(login_session['username']))
+	output = ''
+	output += '<h1>Welcome, '
+	output += login_session['username']
+	output += '!</h1>'
+	output += '<img src="'
+	output += login_session['picture']
+	output += '"style="width: 300px; height: 300px; border-\
+			radius: 150px;-webkit-border-radius: 150px;-moz-border-radius:150px;">'
+	flash("you are now logged in as {}".format(login_session['username']))
 	# print (output)
-	response = make_response(json.dumps('login Successful'), 200)
-	return ('login Successful!')
-	# return render_template('loginSuccess.html')
-	# return jsonify(output)
-
+	return output
 
 #DISCONNECT - Revoke a current user's token and reset their login_sesion
 @app.route('/gdisconnect')
