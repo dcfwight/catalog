@@ -93,7 +93,7 @@
             // Here we run a very simple test of the Graph API after login is
             // successful. See statusChangeCallback() for when this call is made.
             function sendTokenToServer(){
-                var access_token = FB.getAuthResponse()['accessToken'];
+                var access_token = FB.getAuthResponse().accessToken;
                 console.log('access_token is:');
                 console.log(access_token);
                 console.log('Welcome! Fetching your information...');
@@ -111,7 +111,7 @@
                                 console.log(result);
                                 $('#result').html('Login Successful!</br>' + result + '</br>Redirecting...');
                                 setTimeout(function(){
-                                    window.location.href="/restaurant";
+                                    window.location.href="/catalog";
                                 }, 2000);
                             }
                             else {
