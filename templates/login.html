@@ -30,7 +30,7 @@
 	<div id='result'></div>
 	<script>
 	function signInCallBack(authResult) {
-		if (authResult['code']) {
+		if (authResult.code) {
 			// if the authResult contains 'code' we know that authorization was successful
 			// Hide the sign-in button now that the user is authorized
 			$('#signinButton').attr('style', 'display: none');
@@ -43,7 +43,7 @@
 				// pass the state token back to verify against cross-site forgery attack
 				processData: false,
 				// indicates we do not want jQuery to process the response into a string
-				data: authResult['code'], // sending the one-time use code as 'data'
+				data: authResult.code, // sending the one-time use code as 'data'
 				contentType: 'application/octet-stream; charset=utf-8',
 				success: function(result) {
 					// Handle or verify the server response if necessary.
@@ -54,8 +54,8 @@
 							window.location.href = "/catalog";
 						}, 4000);
 
-					} else if (authResult['error']) {
-						console.log('There was an error: ' + authResult['error']);
+					} else if (authResult.error) {
+						console.log('There was an error: ' + authResult.error);
 					} else {
 						$('#result').html('Failed to make a server-side call. Check your configuration and console.');
 					}
