@@ -16,6 +16,8 @@ from oauth2client.client import flow_from_clientsecrets
 # creates a flow objectfrom clientsecrets JSON file. Stores client Id and other oAuth parameters
 from oauth2client.client import FlowExchangeError
 # this will catch errors when trying to exchange an authorisation code for an access token.
+from oauth2client.client import AccessTokenCredentials
+# this is required to fix Oauth error with JSON objects
 
 
 import httplib2 # comprehensive http clientlibrary in python
@@ -199,14 +201,16 @@ def gconnect():
 
 	# Check that the access token is valid
 	access_token = credentials.access_token
-	print ('access_token is: %s' %access_token)
-	url=('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s' %access_token)
+	print ('access_token is: {}'.format(access_token))
+	url=('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={}'.format(access_token))
 	# append the access token to the url and Google apiserver
 	# will check to see if it is valid.
 	h = httplib2.Http()
 	result = json.loads(h.request(url, 'GET')[1].decode())
 	# If there was an error in the access token info, abort
 	if result.get('error') is not None:
+		print ('There was an error in the Access token')
+		print (result['error'])
 		response = make_response(json.dumps(result.get('error')), 500)
 		response.headers['Content-Type'] = 'application/json'
 		return response
@@ -243,7 +247,13 @@ def gconnect():
 
 	# Store the access token in the session for later use
 	login_session['provider'] = 'google'
-	login_session['credentials'] = credentials
+	
+	login_session['credentials'] = credentials.access_token
+	# NOTE this is different to Udacity course - storing only the access token
+	# Not entirely sure why - see https://github.com/udacity/ud330/issues/4
+	# for discussion. Post by Linus Dong fixed it.
+	# return credential object
+	credentials = AccessTokenCredentials(login_session['credentials'], 'user-agent-value')
 	login_session['gplus_id'] = gplus_id
 
 	# Get user info
@@ -260,21 +270,27 @@ def gconnect():
 	userId=getUserID(login_session['email'])
 	if not userId:
 		createUser(login_session)
+		print ('User was NOT in database, so user was created')
+	else:
+		print ('User was already in database, so no changes made')
 	login_session['user_id'] = userId
 
 	print('login_session is: ')
-	pp.pprint(login_session)
-	output = ''
-	output += '<h1>Welcome, '
-	output += login_session['username']
-	output += '!</h1>'
-	output += '<img src="'
-	output += login_session['picture']
-	output += '"style="width: 300px; height: 300px; border-\
-			radius: 150px;-webkit-border-radius: 150px;-moz-border-radius:150px;">'
-	flash("you are now logged in as %s"%login_session['username'])
-	print (output)
-	return jsonify(output)
+	print(login_session)
+	# output = ''
+	# output += '<h1>Welcome, '
+	# output += login_session['username']
+	# output += '!</h1>'
+	# output += '<img src="'
+	# output += login_session['picture']
+	# output += '"style="width: 300px; height: 300px; border-\
+	# 		radius: 150px;-webkit-border-radius: 150px;-moz-border-radius:150px;">'
+	# flash("you are now logged in as {}".format(login_session['username']))
+	# print (output)
+	response = make_response(json.dumps('login Successful'), 200)
+	return ('login Successful!')
+	# return render_template('loginSuccess.html')
+	# return jsonify(output)
 
 
 #DISCONNECT - Revoke a current user's token and reset their login_sesion
