@@ -431,7 +431,7 @@ def disconnect():
     if 'provider' in login_session:
         if login_session['provider'] == 'google':
             response = gdisconnect()
-            if response.status == 400:
+            if response['status'] == 400:
                 print (response.message)
             del login_session['gplus_id']
             del login_session['credentials']
