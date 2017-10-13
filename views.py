@@ -181,7 +181,7 @@ def gconnect():
     print ("state parameter was valid. Obtaining a one-time authorisation code")
     code = request.data # this will only happen if the if statement above is false - i.e. the state variable matches correctly.
     # code is then the one-time code received back from google.
-    print ("One-time auth code is: {}".format(code.decode()))
+    print ("\nGoogle One-time auth code is: {}".format(code.decode()))
     try:
         # Upgrade the authorization code into a credentials object
         oauth_flow = flow_from_clientsecrets('google_client_secret.json', scope='') # this creates an oauth_flow object and adds the client_secrets info to it
@@ -189,7 +189,7 @@ def gconnect():
         # needed to add some redirect uri s to the google api, and then re-download as it was causing errors.
         oauth_flow.redirect_uri = 'postmessage' # this specifies it is the one time code flow that the server will be sending off.
         credentials = oauth_flow.step2_exchange(code) # this initiates the exchange with the step2_exchange module, passing in the secret info.
-        print ('\nSuccessfully updated the authorization code into a credentials object')
+        print ('\nGoogle: Successfully updated the authorization code into a credentials object')
     # it exchanges the authorisation code for a credentials object. If all goes well, the response from Google will be a credentials object
     # that will be stored in the variable 'credentials'
     except FlowExchangeError:
@@ -201,21 +201,22 @@ def gconnect():
 
     # Check that the access token is valid
     access_token = credentials.access_token
-    print ('access_token is: {}'.format(access_token))
-    url=('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={}'.format(access_token))
+    print ('Google access_token is: {}'.format(access_token))
+    url=('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={}'
+         .format(access_token))
     # append the access token to the url and Google apiserver
     # will check to see if it is valid.
     h = httplib2.Http()
     result = json.loads(h.request(url, 'GET')[1].decode())
     # If there was an error in the access token info, abort
     if result.get('error') is not None:
-        print ('There was an error in the Access token')
+        print ('There was an error in the Google Access token')
         print (result['error'])
         response = make_response(json.dumps(result.get('error')), 500)
         response.headers['Content-Type'] = 'application/json'
         return response
     else:
-        print ('Access token info has no error')
+        print ('Google Access token info has no error')
 
     # Verify that the access token is used for the intended user:
     gplus_id = credentials.id_token['sub']
@@ -229,12 +230,12 @@ def gconnect():
     # Verify that the access token is valid for this app
     if result['issued_to'] != GOOGLE_CLIENT_ID:
         response = make_response(
-                                                                        json.dumps("Token's client ID does not match app's"),401)
-        print ("Token's client ID does not match app's")
+            json.dumps("Google Token's client ID does not match app's"),401)
+        print ("Google Token's client ID does not match app's")
         response.headers['Content-Type'] = 'application/json'
         return response
     else:
-        print("Token's client ID matches this current app's Google Client ID")
+        print("Google Token's client ID matches this current app's Google Client ID")
 
     # Check to see if user is already logged in
     stored_credentials = login_session.get('credentials')
@@ -261,6 +262,8 @@ def gconnect():
     params = {'access_token': credentials.access_token, 'alt':'json'}
     answer = requests.get(userinfo_url, params= params)
     data = json.loads(answer.text)
+    print ("\nGoogle user info is: ")
+    pp.pprint(data)
 
     login_session['username'] = data["name"]
     login_session['picture'] = data["picture"]
@@ -311,9 +314,11 @@ def gdisconnect():
     result = h.request(url, 'GET') [0]
     
     if result['status'] == '200':
-        return ['Successfully disconnected', 200]
+        return {'message': 'Successfully disconnected',
+                'status': 200}
     else:
-        return ['Failed to revoke token for given user', 400]
+        return {'message':'Failed to revoke token for given user',
+                'status': 400}
 
 ################################################################################
 ## FACEBOOK connection ##
@@ -342,11 +347,17 @@ def fbconnect():
     # print (url)
     h = httplib2.Http()
     result = h.request(url, 'GET')[1].decode()
-    data =json.loads(result)
+    fb_ll_token =json.loads(result)
     print ('\nFacebook long-lived server-side token is: ')
-    pp.pprint (data)
-    tokenString = 'access_token='+data['access_token']
-
+    pp.pprint (fb_ll_token)
+    tokenString = 'access_token='+fb_ll_token['access_token']
+    
+    # The access token must be stored in the login session in order to
+    # properly log out. NOTE this was a change from original Udacity lecture
+    # code, as Facebook updated API required access code to be sent when
+    # revoking the access token.
+    login_session['access_token'] =fb_ll_token['access_token']
+    
     #use token to get user info from API
     userinfo_url = ('https://graph.facebook.com/v2.8/me?{}'
                     '&fields=name,id,email'.format(tokenString))
@@ -360,7 +371,9 @@ def fbconnect():
     login_session['username'] = data["name"]
     login_session['email'] = data['email']
     login_session['facebook_id'] = data["id"]
-
+    
+    
+    
     # Get user picture
     # facebook uses a seperate API call to get user picture
     url = ('https://graph.facebook.com/v2.2/me/'
@@ -390,27 +403,36 @@ def fbconnect():
     output += '"style="width: 300px; height: 300px; border-\
                     radius: 150px;-webkit-border-radius: 150px;-moz-border-radius:150px;">'
     flash("you are now logged in as %s"%login_session['username'])
-    print (output)
+    # print (output)
     return output
 
 @app.route('/fbdisconnect')
 # Note that this is now supplemented by the generic /disconnect function
 def fbdisconnect():
     facebook_id = login_session['facebook_id']
-    url = 'https://graph.facebook.com/{}/permissions'.format( facebook_id)
+    access_token= login_session['access_token']
+    # Note the following url changed from original Udacity code, because
+    # facebook updated API call and requested the access_token as well.
+    url = ('https://graph.facebook.com/{}/permissions'
+           '?access_token={}'.format( facebook_id, access_token))
+    
     h = httplib2.Http()
-    result = h.request(url, 'DELETE') [1].decode()
+    result = json.loads(h.request(url, 'DELETE') [1].decode())
     pp.pprint (result)
     # NB the deletions for lognin_session are all handled in disconnect() 
-    return "you have been logged out"
+    if result['success']:
+        print ('Facebook logout completed successfully')
+        return "you have been logged out"
+    else:
+        return "error in logging out"
 
 @app.route('/disconnect')
 def disconnect():
     if 'provider' in login_session:
         if login_session['provider'] == 'google':
             response = gdisconnect()
-            if response[1] == 400:
-                print (response[0])
+            if response.status == 400:
+                print (response.message)
             del login_session['gplus_id']
             del login_session['credentials']
         if login_session['provider'] == 'facebook':
