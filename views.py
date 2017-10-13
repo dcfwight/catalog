@@ -4,8 +4,8 @@ from flask import session as login_session
 # login_session is a dictionary that stores users login details for the duration of their session
 
 import random, string
-import pprint as pp # for pretty-printing
-# from collections import OrderedDict # to enable sorting on nested dictionaries
+import pprint 
+pp = pprint.PrettyPrinter(indent=4)
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -305,25 +305,14 @@ def gdisconnect():
     # access_token = credentials.access_token
     # previous line no longer relevant, once we fixed the issue (search this
     # file for comments on Linus Dong to see where it was fixed)
-    # following url is googles url for revoking tokens
+    # following url is google's url for revoking tokens
     url = "https://accounts.google.com/o/oauth2/revoke?token={}".format(credentials)
-    # url = "https://accounts.google.com/o/oauth2/revoke?token={}".format(access_token)
     h = httplib2.Http()
     result = h.request(url, 'GET') [0]
-
+    
     if result['status'] == '200':
-        # Reset the user's session
-        # NB deletion of login_session info is handled in disconnect()
-        
-        # response = make_response(json.dumps('Successfully disconnected'), 200)
-        # response.headers['Content-Type']= 'application/json'
-        # return response
         return ['Successfully disconnected', 200]
     else:
-        # for whatever reason, the given token was invalid
-        # response = make_response(json.dumps('Failed to revoke token for given user'), 400)
-        # response.headers['Content-Type']= 'application/json'
-        # return response
         return ['Failed to revoke token for given user', 400]
 
 ################################################################################
@@ -331,43 +320,42 @@ def gdisconnect():
 
 @app.route('/fbconnect', methods = ['POST'])
 def fbconnect():
+    # validate state token sent by client. 
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
     access_token = request.data.decode()
-
-    # Exchange client token for long-lived server-side token with GET/oauth/
-    # access_token?grant_type=fb_exchange_token&client_id={app-id}
-    # &client_secret={app-secret}&fb_exchange_token={short-lived_token}
-    app_id = json.loads(open('fb_client_secret.json','r').read())['web']['app_id']
-    app_secret = json.loads(open('fb_client_secret.json','r').read())['web']['app_secret']
+    # print ('facebook short-lived access token is: {}'.format(access_token))
+    
+    # Retrieve the app_id and app_secret from our fb_client_secret file
+    app_id = json.loads(open('fb_client_secret.json','r')
+        .read())['web']['app_id']
+    app_secret = json.loads(open('fb_client_secret.json','r')
+        .read())['web']['app_secret']
+    
+    # Exchange client token for long-lived server-side token
     url = ('https://graph.facebook.com/v2.9/oauth/access_token?'
-                            'grant_type=fb_exchange_token&client_id={}&client_secret={}'
-                            '&fb_exchange_token={}'.format(app_id, app_secret, access_token))
-    print ('url to send to get exchange token is: ')
-    print (url)
+            'grant_type=fb_exchange_token&client_id={}&client_secret={}'
+            '&fb_exchange_token={}'.format(app_id, app_secret, access_token))
+    # print ('facebook url to send to get exchange token is: ')
+    # print (url)
     h = httplib2.Http()
     result = h.request(url, 'GET')[1].decode()
     data =json.loads(result)
-    print ('data is: ')
-    print (data)
-    token = 'access_token='+data['access_token']
-    print ('token is: {}'.format(token))
+    print ('\nFacebook long-lived server-side token is: ')
+    pp.pprint (data)
+    tokenString = 'access_token='+data['access_token']
 
     #use token to get user info from API
-    userinfo_url = "https://graph.facebook.com/v2.2/me"
-    # strip expire tag from access token
-    #token = result.split('&')[0]
-
-    url = 'https://graph.facebook.com/v2.8/me?%s&fields=name,id,email' % token
+    userinfo_url = ('https://graph.facebook.com/v2.8/me?{}'
+                    '&fields=name,id,email'.format(tokenString))
     h = httplib2.Http()
-    result =h.request(url, 'GET')[1].decode()
-    print ('url sent for API access: {}'.format(url))
-    print ("API JSON result: {}".format(result))
+    result =h.request(userinfo_url, 'GET')[1].decode()
+
     data = json.loads(result)
-    print ('data info back from Facebook: ')
-    print (data)
+    print ('\nFacebook User info is: ')
+    pp.pprint (data)
     login_session['provider'] = 'facebook'
     login_session['username'] = data["name"]
     login_session['email'] = data['email']
@@ -376,12 +364,14 @@ def fbconnect():
     # Get user picture
     # facebook uses a seperate API call to get user picture
     url = ('https://graph.facebook.com/v2.2/me/'
-                            'picture?{}&redirect=0&height=200&width=200'.format(token))
+            'picture?{}&redirect=0&height=200&width=200'.format(tokenString))
     h = httplib2.Http()
     result =h.request(url, 'GET')[1].decode()
-    print ('result from user picture request is: ')
-    print (result)
     data = json.loads(result)
+    
+    print ('\nFacebook: result from user picture request is: ')
+    pp.pprint (data)
+    
     login_session['picture'] = data['data']['url']
 
     # see if user exists in our database. If it doesn't, make a new one
