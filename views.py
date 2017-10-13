@@ -60,8 +60,10 @@ def createCategory():
     if request.method =='GET':
         return redirect(url_for('showCatalog'))
     elif request.method =='POST':
-        category_name = request.form['name']
-        creator_id = request.form['creator_id']
+        if request.form['name']:
+            category_name = request.form['name']
+        if request.form['creator_id']:
+            creator_id = request.form['creator_id']
         if session.query(Category).filter_by(name = category_name).first():
             flash('Category: {} already exits'.format(category_name))
         else:
