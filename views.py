@@ -85,7 +85,7 @@ def createItem():
     if request.form['category_id']:
         newItem.category_id = request.form['category_id']
     if request.form['creator_id']:
-        newItem.user_id = request.form['creator_id']
+        newItem.creator_id = request.form['creator_id']
     for key in request.form:
         print(key, ': ', request.form[key] )
     newItem.edited_time = int(time.time())
@@ -105,6 +105,8 @@ def editCategory(id):
         pp.pprint(category_to_edit.serialize)
         if request.form['name']:
             category_to_edit.name = request.form['name']
+        if request.form['creator_id']:
+            category_to_edit.creator_id=request.form['creator_id']
         session.add(category_to_edit)
         session.commit(category_to_edit)
         flash('{} edited'.format(category_to_edit.name))
