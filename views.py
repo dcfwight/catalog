@@ -1,10 +1,10 @@
-from flask import Flask, flash, jsonify, redirect, render_template,\
-                                                                                                                                                                                                                                                                request, url_for
+from flask import Flask, flash, jsonify, redirect, render_template
+from flask import request, url_for
 from flask import session as login_session
 # login_session is a dictionary that stores users login details for the duration of their session
 
 import random, string
-import pprint 
+import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
 from sqlalchemy import create_engine
@@ -25,8 +25,8 @@ import json
 from flask import make_response #converts the return value from a function into a real response object to send to client
 import requests
 
-GOOGLE_CLIENT_ID = json.loads(
-                                                                                                                                open('google_client_secret.json','r').read())['web']['client_id']
+GOOGLE_CLIENT_ID = json.loads(open('google_client_secret.json','r')
+                              .read())['web']['client_id']
 
 engine = create_engine('sqlite:///catalog.db')
 Base.metadata.bind = engine
@@ -41,13 +41,16 @@ app = Flask(__name__)
 def showCatalog():
     categories = session.query(Category).order_by(Category.name)
     # for category in categories:
-                                                                                                                                    # pp.pprint(category.serialize)
+    # pp.pprint(category.serialize)
     items = session.query(Item).order_by(Item.edited_time).limit(5)
     latest_items = []
     for item in items:
         latest_items.append(item.serialize)
     for item in latest_items:
-        item['category_name'] = session.query(Category).filter_by(id = item['category_id']).one().name
+        item['category_name'] = (session.query(Category)
+                                 .filter_by(id = item['category_id'])
+                                 .one()
+                                 .name)
     return render_template('catalog.html', categories=categories,
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     latest_items = latest_items)
 
@@ -58,10 +61,12 @@ def createCategory():
         return redirect(url_for('showCatalog'))
     elif request.method =='POST':
         category_name = request.form['name']
+        creator_id = request.form['creator_id']
         if session.query(Category).filter_by(name = category_name).first():
             flash('Category: {} already exits'.format(category_name))
         else:
-            newCategory = Category(name=category_name)
+            newCategory = Category(name=category_name,
+                                   creator_id=creator_id)
             session.add(newCategory)
             session.commit()
             flash('{} created'.format(newCategory.name))
@@ -77,8 +82,8 @@ def createItem():
         newItem.description = request.form['description']
     if request.form['category_id']:
         newItem.category_id = request.form['category_id']
-    if request.form['user_id']:
-        newItem.user_id = request.form['user_id']
+    if request.form['creator_id']:
+        newItem.user_id = request.form['creator_id']
     for key in request.form:
         print(key, ': ', request.form[key] )
     newItem.edited_time = int(time.time())
@@ -91,7 +96,9 @@ def createItem():
 def editCategory(id):
     if request.method == 'POST':
         print (request.form)
-        category_to_edit = session.query(Category).filter_by(id=id).one()
+        category_to_edit = (session.query(Category)
+                            .filter_by(id=id)
+                            .one())
         print ('category to edit retrieved from database')
         pp.pprint(category_to_edit.serialize)
         if request.form['name']:
@@ -115,27 +122,30 @@ def editItem(id):
             item_to_edit.description = request.form['description']
         if request.form['category_id']:
             item_to_edit.category_id = request.form['category_id']
-        if request.form['user_id']:
-            item_to_edit.user_id = request.form['user_id']
+        if request.form['creator_id']:
+            item_to_edit.user_id = request.form['creator_id']
         for key in request.form:
             print(key, ': ', request.form[key] )
         if request.form != []:
             item_to_edit.edited_time = edited_time
         session.add(item_to_edit)
         session.commit()
-        parent_category = session.query(Category).filter_by(id = item_to_edit.category_id).first()
+        parent_category = session.query(Category)\
+            .filter_by(id = item_to_edit.category_id).first()
         flash('{} edited'.format(item_to_edit.name))
         return redirect(url_for('item_display', category=parent_category.name,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        item = item_to_edit.name))
+            item = item_to_edit.name))
 
 @app.route('/deleteCategory/<int:id>', methods = ['GET', 'POST'])
 def deleteCategory(id):
     category_to_delete = session.query(Category).filter_by(id=id).first()
     # We also need to delete the items associated with the category
-    items_to_delete = session.query(Item).filter_by(category_id = id).all()
+    items_to_delete = (session.query(Item)
+                       .filter_by(category_id = id).all())
     if request.method == 'GET':
-        return render_template('deleteCategory.html', category = category_to_delete, \
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         items = items_to_delete)
+        return render_template('deleteCategory.html',
+                category = category_to_delete,
+                items = items_to_delete)
     elif request.method == 'POST':
         session.delete(category_to_delete)
         if (items_to_delete):
@@ -152,8 +162,11 @@ def deleteItem(id):
         return render_template('deleteItem.html', item = item_to_delete)
     elif request.method == 'POST':
         item_category_id = item_to_delete.category_id
-        # print ('item_to_delete.category_id is: {}'.format(item_to_delete.category_id))
-        category = session.query(Category).filter_by(id = item_category_id).one()
+        # print ('item_to_delete.category_id is: {}'
+        #        .format(item_to_delete.category_id))
+        category = (session.query(Category)
+                    .filter_by(id = item_category_id)
+                    .one())
         # print (category.serialize)
         session.delete(item_to_delete)
         session.commit()
@@ -179,23 +192,30 @@ def gconnect():
         return response
     # If it passes that, then we next obtain a one-time authorisation code.
     print ("state parameter was valid. Obtaining a one-time authorisation code")
-    code = request.data # this will only happen if the if statement above is false - i.e. the state variable matches correctly.
+    code = request.data
+    # this will only happen if the if statement above is false
+    # i.e. IFF the state variable matches correctly.
     # code is then the one-time code received back from google.
     print ("\nGoogle One-time auth code is: {}".format(code.decode()))
     try:
         # Upgrade the authorization code into a credentials object
-        oauth_flow = flow_from_clientsecrets('google_client_secret.json', scope='') # this creates an oauth_flow object and adds the client_secrets info to it
+        oauth_flow = flow_from_clientsecrets('google_client_secret.json',
+                                             scope='')
+        # this creates an oauth_flow object and adds the client_secrets info to it
         # client_secrets.json was the json object downloaded from console.developers.google.com for your app
         # needed to add some redirect uri s to the google api, and then re-download as it was causing errors.
         oauth_flow.redirect_uri = 'postmessage' # this specifies it is the one time code flow that the server will be sending off.
         credentials = oauth_flow.step2_exchange(code) # this initiates the exchange with the step2_exchange module, passing in the secret info.
-        print ('\nGoogle: Successfully updated the authorization code into a credentials object')
-    # it exchanges the authorisation code for a credentials object. If all goes well, the response from Google will be a credentials object
-    # that will be stored in the variable 'credentials'
+        print ('\nGoogle: Successfully updated the authorization code into'
+               'a credentials object')
+        # it exchanges the authorisation code for a credentials object.
+        # If all goes well, the response from Google will be a credentials object
+        # that will be stored in the variable 'credentials'
     except FlowExchangeError:
         print ('FlowExchangeError triggered')
         print (FlowExchangeError)
-        response = make_response(json.dumps('Failed to upgrade the authorization code'), 401)
+        response = make_response(json.dumps(
+            'Failed to upgrade the authorization code'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -221,7 +241,8 @@ def gconnect():
     # Verify that the access token is used for the intended user:
     gplus_id = credentials.id_token['sub']
     if result['user_id'] != gplus_id:
-        response = make_response(json.dumps("Token's user ID does not match given User ID"), 401)
+        response = make_response(json.dumps(
+            "Token's user ID does not match given User ID"), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
     else:
@@ -241,7 +262,8 @@ def gconnect():
     stored_credentials = login_session.get('credentials')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_credentials is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected'), 200)
+        response = make_response(json.dumps(
+            'Current user is already connected'), 200)
         response.headers['Content-Type'] = 'application/json'
 
     # Assuming all the if statements are passed - you have not returned a response and the access token is valid
@@ -254,7 +276,8 @@ def gconnect():
     # Not entirely sure why - see https://github.com/udacity/ud330/issues/4
     # for discussion. Post by Linus Dong fixed it.
     # return credential object
-    credentials = AccessTokenCredentials(login_session['credentials'], 'user-agent-value')
+    credentials = AccessTokenCredentials(
+        login_session['credentials'], 'user-agent-value')
     login_session['gplus_id'] = gplus_id
 
     # Get user info
@@ -287,7 +310,7 @@ def gconnect():
     output += '<img src="'
     output += login_session['picture']
     output += '"style="width: 300px; height: 300px; border-\
-                                                                    radius: 150px;-webkit-border-radius: 150px;-moz-border-radius:150px;">'
+        radius: 150px;-webkit-border-radius: 150px;-moz-border-radius:150px;">'
     flash("you are now logged in as {}".format(login_session['username']))
     # print (output)
     return output
@@ -309,10 +332,11 @@ def gdisconnect():
     # previous line no longer relevant, once we fixed the issue (search this
     # file for comments on Linus Dong to see where it was fixed)
     # following url is google's url for revoking tokens
-    url = "https://accounts.google.com/o/oauth2/revoke?token={}".format(credentials)
+    url = ("https://accounts.google.com/o/oauth2/revoke?token={}"
+           .format(credentials))
     h = httplib2.Http()
     result = h.request(url, 'GET') [0]
-    
+
     if result['status'] == '200':
         return {'message': 'Successfully disconnected',
                 'status': 200}
@@ -325,20 +349,20 @@ def gdisconnect():
 
 @app.route('/fbconnect', methods = ['POST'])
 def fbconnect():
-    # validate state token sent by client. 
+    # validate state token sent by client.
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
     access_token = request.data.decode()
     # print ('facebook short-lived access token is: {}'.format(access_token))
-    
+
     # Retrieve the app_id and app_secret from our fb_client_secret file
     app_id = json.loads(open('fb_client_secret.json','r')
         .read())['web']['app_id']
     app_secret = json.loads(open('fb_client_secret.json','r')
         .read())['web']['app_secret']
-    
+
     # Exchange client token for long-lived server-side token
     url = ('https://graph.facebook.com/v2.9/oauth/access_token?'
             'grant_type=fb_exchange_token&client_id={}&client_secret={}'
@@ -351,13 +375,13 @@ def fbconnect():
     print ('\nFacebook long-lived server-side token is: ')
     pp.pprint (fb_ll_token)
     tokenString = 'access_token='+fb_ll_token['access_token']
-    
+
     # The access token must be stored in the login session in order to
     # properly log out. NOTE this was a change from original Udacity lecture
     # code, as Facebook updated API required access code to be sent when
     # revoking the access token.
     login_session['access_token'] =fb_ll_token['access_token']
-    
+
     #use token to get user info from API
     userinfo_url = ('https://graph.facebook.com/v2.8/me?{}'
                     '&fields=name,id,email'.format(tokenString))
@@ -371,9 +395,9 @@ def fbconnect():
     login_session['username'] = data["name"]
     login_session['email'] = data['email']
     login_session['facebook_id'] = data["id"]
-    
-    
-    
+
+
+
     # Get user picture
     # facebook uses a seperate API call to get user picture
     url = ('https://graph.facebook.com/v2.2/me/'
@@ -381,10 +405,10 @@ def fbconnect():
     h = httplib2.Http()
     result =h.request(url, 'GET')[1].decode()
     data = json.loads(result)
-    
+
     print ('\nFacebook: result from user picture request is: ')
     pp.pprint (data)
-    
+
     login_session['picture'] = data['data']['url']
 
     # see if user exists in our database. If it doesn't, make a new one
@@ -401,7 +425,7 @@ def fbconnect():
     output += '<img src="'
     output += login_session['picture']
     output += '"style="width: 300px; height: 300px; border-\
-                    radius: 150px;-webkit-border-radius: 150px;-moz-border-radius:150px;">'
+        radius: 150px;-webkit-border-radius: 150px;-moz-border-radius:150px;">'
     flash("you are now logged in as %s"%login_session['username'])
     # print (output)
     return output
@@ -415,11 +439,11 @@ def fbdisconnect():
     # facebook updated API call and requested the access_token as well.
     url = ('https://graph.facebook.com/{}/permissions'
            '?access_token={}'.format( facebook_id, access_token))
-    
+
     h = httplib2.Http()
     result = json.loads(h.request(url, 'DELETE') [1].decode())
     pp.pprint (result)
-    # NB the deletions for lognin_session are all handled in disconnect() 
+    # NB the deletions for lognin_session are all handled in disconnect()
     if result['success']:
         print ('Facebook logout completed successfully')
         return "you have been logged out"
@@ -448,7 +472,7 @@ def disconnect():
         return redirect(url_for('showCatalog'))
     else:
         flash("You were not logged in to begin with!")
-        return redirect(url_for('showCatalog'))    
+        return redirect(url_for('showCatalog'))
 
 
 def getUserID(email):
@@ -463,11 +487,14 @@ def getUserInfo(user_id):
     return user
 
 def createUser(login_session):
-    newUser = User(username = login_session['username'], email =
-                                                             login_session['email'], picture = login_session['picture'])
+    newUser = User(username = login_session['username'],
+                   email= login_session['email'],
+                   picture = login_session['picture'])
     session.add(newUser)
     session.commit()
-    user = session.query(User).filter_by(email = login_session['email']).one()
+    user = (session.query(User)
+            .filter_by(email = login_session['email'])
+            .one())
     return user.id
 
 @app.route('/catalog/<string:category>/items', methods=['GET'])
@@ -476,19 +503,23 @@ def category_display(category):
     category_requested = session.query(Category).filter_by(name = category).first()
     # pp.pprint (category_to_show.serialize)
     all_categories = session.query(Category).all()
-    items_to_show = session.query(Item)\
-                                                                                                                                                                                                                                                                    .filter_by(category_id = category_requested.id)\
-                                                                                                                                                                                                                                                                    .order_by(Item.name).all()
+    items_to_show = (session.query(Item)
+        .filter_by(category_id = category_requested.id)
+        .order_by(Item.name).all())
     # for item in items_to_show:
         # pp.pprint (item.serialize)
-    return render_template('category.html', categories = all_categories, \
-                                                                                                                                                                                                                                                                                                                                                                                                    selected_category = category_requested.name, items = items_to_show)
+    return render_template('category.html',
+                           categories = all_categories,
+                           selected_category = category_requested.name,
+                           items = items_to_show)
 
 @app.route('/catalog/<string:category>/<string:item>', methods=['GET'])
 def item_display(category, item):
     # first get the item. Bear in mind there may be >1 e.g. rugby ball, soccer ball
     item_selected = session.query(Item).filter_by(name=item).all()
-    category_selected = session.query(Category).filter_by(name=category).first()
+    category_selected = (session.query(Category)
+                         .filter_by(name=category)
+                         .first())
     print (category_selected.name)
     for item in item_selected:
         if item.category_id == category_selected.id:
@@ -509,8 +540,12 @@ def itemsJSON():
 
 @app.route('/api/<string:category>/items/', methods=['GET'])
 def categoryItemsJSON(category):
-    category_selected = session.query(Category).filter_by(name = category).first()
-    category_items = session.query(Item).filter_by(category_id = category_selected.id).all()
+    category_selected = (session.query(Category)
+                         .filter_by(name = category)
+                         .first())
+    category_items = (session.query(Item)
+                      .filter_by(category_id = category_selected.id)
+                      .all())
     return jsonify(CategoryItemList = [i.serialize for i in category_items])
 
 #-------------------------------------------------------
