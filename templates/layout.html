@@ -11,26 +11,36 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
-	{% with messages = get_flashed_messages() %}
-		{% if messages %}
-		<ul class=flashes>
-		{% for message in messages %}
-			<li>{{message}}</li>
-		{% endfor %}
-		</ul>
-		{% endif %}
-	{% endwith %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+                <li>{{message}}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
     {% endblock %}
-  </head>
-  <body>
-    <div class="container">
-      <a href="/login" class="btn btn-info" role="button">Login</a>
-      <div id="content">{% block content %}{% endblock %}</div>
-      <div id="footer">
-        {% block footer %}
-        &copy; Copyright 2017 by DCF Wight</a>.
-        {% endblock %}
-      </div>
-    </div>
-  </body>
+    </head>
+    <body>
+        <div class="container">
+            <div class="col-md-6">
+                <a href="{{url_for('showCatalog')}}">
+                    <span class="glyphicon glyphicon-home" aria-hidden=true>
+                        Show all Categories
+                    </span>
+                </a>
+            </div>
+            <div class="col-md-6 text-right">
+            
+            
+            </div>
+            <div id="content">{% block content %}{% endblock %}</div>
+            <div id="footer">
+                {% block footer %}
+                &copy; Copyright 2017 by DCF Wight</a>.
+                {% endblock %}
+            </div>
+        </div>
+    </body>
 </html>
