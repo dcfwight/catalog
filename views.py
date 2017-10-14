@@ -1,7 +1,7 @@
 from flask import Flask, flash, jsonify, redirect, render_template
 from flask import request, url_for
 from flask import session as login_session
-# login_session is a dictionary that stores users login details for the duration of their session
+# session is a dictionary that stores users login details for the duration of their session
 
 import random, string
 import pprint
@@ -52,23 +52,57 @@ def showCatalog():
                                  .one()
                                  .name)
     return render_template('catalog.html', categories=categories,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    latest_items = latest_items)
+                           latest_items = latest_items)
+
+@app.route('/catalog/<string:category>/items', methods=['GET'])
+def category_display(category):
+        # print ('category from GET request is {}'.format(category))
+    category_requested = session.query(Category).filter_by(name = category).first()
+    # pp.pprint (category_to_show.serialize)
+    all_categories = session.query(Category).all()
+    items_to_show = (session.query(Item)
+        .filter_by(category_id = category_requested.id)
+        .order_by(Item.name).all())
+    # for item in items_to_show:
+        # pp.pprint (item.serialize)
+    return render_template('category.html',
+                           categories = all_categories,
+                           selected_category = category_requested.name,
+                           items = items_to_show)
+
+@app.route('/catalog/<string:category>/<string:item>', methods=['GET'])
+def item_display(category, item):
+    # first get the item. Bear in mind there may be >1 e.g. rugby ball, soccer ball
+    item_selected = session.query(Item).filter_by(name=item).all()
+    category_selected = (session.query(Category)
+                         .filter_by(name=category)
+                         .first())
+    print (category_selected.name)
+    for item in item_selected:
+        if item.category_id == category_selected.id:
+            # print (item.name)
+            return render_template('item.html', item = item)
 
 @app.route('/createCategory/', methods = ['GET','POST'])
 def createCategory():
     # print (request.form)
-    if request.method =='GET':
+    if 'username' not in login_session:
+        # i.e. if we do not have a logged in user, just show the Catalog
+        # does not matter whether it is GET or POST.
         return redirect(url_for('showCatalog'))
     elif request.method =='POST':
+        print ('test for whether user_id is in login_session')
+        print ('user_id' in login_session)
+        print (login_session['user_id'])
+        # we are only proceeding if there is a logged in user.
+        user_id = login_session['user_id']
         if request.form['name']:
             category_name = request.form['name']
-        if request.form['creator_id']:
-            creator_id = request.form['creator_id']
         if session.query(Category).filter_by(name = category_name).first():
             flash('Category: {} already exits'.format(category_name))
         else:
             newCategory = Category(name=category_name,
-                                   creator_id=creator_id)
+                                   creator_id=user_id)
             session.add(newCategory)
             session.commit()
             flash('{} created'.format(newCategory.name))
@@ -179,8 +213,9 @@ def deleteItem(id):
 
 @app.route('/login/', methods=['GET'])
 def login():
-    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    for x in range(32))
+    # first create an anti-forgery state token which is long and random
+    state = (''.join(random.choice(string.ascii_uppercase + string.digits)
+                     for x in range(32)))
     login_session['state'] = state
     # print ('state is {}'.format(state))
     return render_template('login.html', STATE=login_session['state'])
@@ -208,8 +243,10 @@ def gconnect():
         # this creates an oauth_flow object and adds the client_secrets info to it
         # client_secrets.json was the json object downloaded from console.developers.google.com for your app
         # needed to add some redirect uri s to the google api, and then re-download as it was causing errors.
-        oauth_flow.redirect_uri = 'postmessage' # this specifies it is the one time code flow that the server will be sending off.
-        credentials = oauth_flow.step2_exchange(code) # this initiates the exchange with the step2_exchange module, passing in the secret info.
+        oauth_flow.redirect_uri = 'postmessage'
+        # this specifies it is the one time code flow that the server will be sending off.
+        credentials = oauth_flow.step2_exchange(code)
+        # this initiates the exchange with the step2_exchange module, passing in the secret info.
         print ('\nGoogle: Successfully updated the authorization code into'
                'a credentials object')
         # it exchanges the authorisation code for a credentials object.
@@ -307,6 +344,8 @@ def gconnect():
 
     print('login_session is: ')
     print(login_session)
+    print ("login_session['user_id'] is: ")
+    print (login_session['user_id'])
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
@@ -326,6 +365,7 @@ def gdisconnect():
     print ('user attempting to gdisconnect - log out as google user')
     # only disconnect a connected user.
     credentials = login_session.get('credentials')
+    print ('login_session.get("credentials") is: ')
     print (credentials)
     if credentials is None:
         response = make_response(json.dumps('Current user not connected'), 401)
@@ -460,7 +500,7 @@ def disconnect():
         if login_session['provider'] == 'google':
             response = gdisconnect()
             if response['status'] == 400:
-                print (response.message)
+                print (response['message'])
             del login_session['gplus_id']
             del login_session['credentials']
         if login_session['provider'] == 'facebook':
@@ -501,34 +541,7 @@ def createUser(login_session):
             .one())
     return user.id
 
-@app.route('/catalog/<string:category>/items', methods=['GET'])
-def category_display(category):
-        # print ('category from GET request is {}'.format(category))
-    category_requested = session.query(Category).filter_by(name = category).first()
-    # pp.pprint (category_to_show.serialize)
-    all_categories = session.query(Category).all()
-    items_to_show = (session.query(Item)
-        .filter_by(category_id = category_requested.id)
-        .order_by(Item.name).all())
-    # for item in items_to_show:
-        # pp.pprint (item.serialize)
-    return render_template('category.html',
-                           categories = all_categories,
-                           selected_category = category_requested.name,
-                           items = items_to_show)
 
-@app.route('/catalog/<string:category>/<string:item>', methods=['GET'])
-def item_display(category, item):
-    # first get the item. Bear in mind there may be >1 e.g. rugby ball, soccer ball
-    item_selected = session.query(Item).filter_by(name=item).all()
-    category_selected = (session.query(Category)
-                         .filter_by(name=category)
-                         .first())
-    print (category_selected.name)
-    for item in item_selected:
-        if item.category_id == category_selected.id:
-            # print (item.name)
-            return render_template('item.html', item = item)
 
 #--------------------------------------------------------
 # Endpoints
