@@ -1,3 +1,7 @@
+a {
+    color: red;
+}
+
 body {
     font: 100%/1.6 arial, helvetica, sans-serif;
 }
@@ -17,6 +21,10 @@ img {
 p {
     color: black;
     text-align: center;
+}
+
+.catalog-header {
+    text-align: left;
 }
 
 .page-header {
