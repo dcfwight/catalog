@@ -24,7 +24,7 @@
     <div class="container">
         <div class='row'>
             <div class="col-md-6 category-list">
-                <h1>Categories</h1>
+                <h1 class="text-left">Categories</h1>
                 {% for category in categories %}
                     <a href = "{{url_for('category_display',
                     category = category.name)}}">
@@ -35,7 +35,7 @@
             </div>
             <div class="col-md-6 category-list">
                 {% if selected_category %}
-                    <h1>{{selected_category.title()}} Items</h1>
+                    <h1 class="text-left">{{selected_category.title()}} Items</h1>
                 {% endif %}
                 {% if items %}
                     {% for item in items %}
