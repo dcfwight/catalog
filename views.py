@@ -81,7 +81,8 @@ def item_display(category, item):
     for item in item_selected:
         if item.category_id == category_selected.id:
             # print (item.name)
-            return render_template('item.html', item = item)
+            return (render_template('item.html',
+                                    item = item, category= category))
 
 @app.route('/createCategory/', methods = ['GET','POST'])
 def createCategory():
