@@ -32,7 +32,17 @@
         <div class="col-md-12">
             <div id='result'></div>    
         </div>
+        
+        <div class="col-md-12">
+            <div id="fb-button">
+                <fb:login-button scope="public_profile,email" onlogin="sendTokenToServer();">
+                    <a href='javascript:sendTokenToServer()'>Login with Facebook</a>
+                </fb:login-button>
+            </div>
+        </div>
+    </div>
     
+    <!-- GOOGLE SIGN IN SCRIPT -->
     <script>
     function signInCallBack(authResult) {
         if (authResult.code) {
@@ -70,7 +80,8 @@
         }
     }
     </script>
-
+    <!-- END GOOGLE SIGN IN SCRIPT -->
+    
     <!-- FACEBOOK SIGN IN -->
     <script>
         window.fbAsyncInit = function() {
@@ -123,14 +134,5 @@
             });
         }
     </script>
-
-     <div class="col-md-12">
-        <div id="fb-button">
-            <fb:login-button scope="public_profile,email" onlogin="sendTokenToServer();">
-                <a href='javascript:sendTokenToServer()'>Login with Facebook</a>
-            </fb:login-button>
-        </div>
-     </div>
-</div>
   
 {% endblock %}
