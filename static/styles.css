@@ -8,7 +8,7 @@ body {
 
 h1,
 h3 {
-    text-align: center;
+    text-align: left;
 }
 
 img {
@@ -23,7 +23,7 @@ p {
     text-align: center;
 }
 
-.catalog-header {
+h1.catalog-header {
     text-align: left;
 }
 
