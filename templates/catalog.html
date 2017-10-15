@@ -9,7 +9,9 @@
                 <h2>Categories</h2>
                 {% if categories %}
                     {% for category in categories %}
-                        <a href="{{url_for('category_display', category = category.name)}}">{{category.name.title()}}</a>
+                        <a href="{{url_for('category_display',
+                        category = category.name)}}">
+                        {{category.name.title()}}</a>
                         <br>
                     {% endfor %}
                 {% endif %}
@@ -21,7 +23,12 @@
                         <a href="{{url_for('item_display',
                         category = item.category_name,
                         item = item.name)}}">
-                        {{item.name.title()}} : <i>({{item.category_name.title()}})</i>
+                        {{item.name.title()}}
+                        </a>
+                        <span>: </span>
+                        <a href="{{url_for('category_display',
+                        category = item.category_name)}}">
+                        <i>({{item.category_name.title()}})</i>
                         </a>
                         <br>
                     {% endfor %}
