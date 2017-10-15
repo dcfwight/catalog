@@ -10,8 +10,6 @@
     {% include 'header.html' %}
   {% if item %}
 		<h1>{{item.name.title()}}</h1>
-		<p>{{item.description}}</p>
+		<p>{{item.description.capitalize()}}</p>
 	{% endif %}
-  <p class="important">
-    Welcome to the Item Screen.
 {% endblock %}
