@@ -1,29 +1,31 @@
 {% extends "layout.html" %}
 {% block title %}Catalog{% endblock %}
-{% block head %}
-    {{ super() }}
-    <style type="text/css">
-        .important { color: #336699; }
-    </style>
-{% endblock %}
+
 {% block content %}
     {% include "header.html" %}
-    {% if categories %}
-        <h2>Categories</h2>
-        {% for category in categories %}
-            <a href="{{url_for('category_display', category = category.name)}}">{{category.name}}</a>
-            <br>
-        {% endfor %}
-    {% endif %}
-    {% if latest_items %}
-        <h2>Latest Items</h2>
-        {% for item in latest_items %}
-            <a href="{{url_for('item_display',
-            category = item.category_name,
-            item = item.name)}}">
-                {{item.name.title()}} : <i>({{item.category_name}})</i>
-            </a>
-            <br>
-        {% endfor %}
-    {% endif %}
-{% endblock %}
+<div>
+    <div class="container">
+         <div class="col-md-6">
+            <h2>Categories</h2>
+            {% if categories %}
+                {% for category in categories %}
+                    <a href="{{url_for('category_display', category = category.name)}}">{{category.name}}</a>
+                    <br>
+                {% endfor %}
+            {% endif %}
+         </div>
+        <div class="col-md-6">
+            <h2>Latest Items</h2>
+            {% if latest_items %}
+                {% for item in latest_items %}
+                    <a href="{{url_for('item_display',
+                    category = item.category_name,
+                    item = item.name)}}">
+                    {{item.name.title()}} : <i>({{item.category_name}})</i>
+                    </a>
+                    <br>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
