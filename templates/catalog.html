@@ -12,7 +12,8 @@
     {% if categories %}
         <h2>Categories</h2>
         {% for category in categories %}
-            <p>{{category.name}}</p>
+            <a href="{{url_for('category_display', category = category.name)}}">{{category.name}}</a>
+            <br>
         {% endfor %}
     {% endif %}
     {% if latest_items %}
