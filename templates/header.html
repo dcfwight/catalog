@@ -1,21 +1,44 @@
-<div class="row top-menu">
-    <div class="col-md-6">
-        <a href="{{url_for('showCatalog')}}">
-            <span class="glyphicon glyphicon-home" aria-hidden="true"></span> Show All Categories
-        </a>
+<div class="masthead">
+    <div class="container">
+        <div class="row top-menu">
+            <div class="col-md-3">
+                <a href="{{url_for('showCatalog')}}">
+                    <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                    Show All Categories
+                </a>
+            </div>
+            <div class="col-md-9 text-right">
+                {% if 'username' not in session %}
+                    <a href="{{url_for('login')}}">Click Here to Log in</a>
+                {% else %}
+                    <a href="{{url_for('disconnect')}}">Disconnect</a>
+                {% endif %}
+            </div>
+        </div>
     </div>
-    <div class="col-md-6 text-right">
-        {% if 'username' not in session %}
-            <a href="{{url_for('login')}}">Click Here to Log in</a>
-        {% else %}
-            <a href="{{url_for('disconnect')}}">Disconnect</a>
-        {% endif %}
+    <div class="container">
+        <div class="row divider blue">
+            <div class="col-md-12"></div>
+        </div>    
     </div>
-    <div class="row top-menu">
-        <div class="col-md-10"></div>
-        <div class="col-md-2 text-right"></div>
+</div>
+<div class="catalog-header">
+    <div class="container">
+        <div class='catalog-header'>
+            <h1>Catalog</h1>    
+        </div>   
     </div>
-    <div class="row divider blue">
-        <div class="col-md-12"></div>
+</div>
+<div class="message-flasher">
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class=flashes>
+                {% for message in messages %}
+                    <li>{{message}}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}    
     </div>
 </div>
