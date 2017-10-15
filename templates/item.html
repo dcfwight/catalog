@@ -7,6 +7,7 @@
   </style>
 {% endblock %}
 {% block content %}
+    {% include 'header.html' %}
   {% if item %}
 		<h1>{{item.name.title()}}</h1>
 		<p>{{item.description}}</p>
