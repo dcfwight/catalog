@@ -5,9 +5,13 @@
     {% include 'header.html' %}
     <div class="container">
         <div class = 'col-md-12'>
+            <p>{{category}}</p>
             {% if item %}
                 <h1 class = 'text-left'>{{item.name.title()}}</h1>
                 <p class = 'text-left'>{{item.description.capitalize()}}</p>
+                <a href="{{url_for('category_display', category=category)}}">
+                    <i>Back to {{category}}</i>
+                </a>
             {% endif %}
         </div>
         
