@@ -24,21 +24,9 @@
     </head>
     <body>
         <div class="container">
-            <div class="col-md-6">
-                <a href="{{url_for('showCatalog')}}">
-                    <span class="glyphicon glyphicon-home" aria-hidden=true>
-                        Show all Categories
-                    </span>
-                </a>
-            </div>
-            <div class="col-md-6 text-right">
-                {% if 'username' not in session %}
-                    <a href="{{url_for('login')}}">Click here to login</a>
-                {% else %}
-                    <a href="{{url_for('disconnect')}}"></a>
-                {% endif %}
-            </div>
-            <div id="content">{% block content %}{% endblock %}</div>
+            {% block content %}
+            {% endblock %}
+            
             <div id="footer">
                 {% block footer %}
                 &copy; Copyright 2017 by DCF Wight</a>.
