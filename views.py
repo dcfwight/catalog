@@ -577,6 +577,6 @@ def categoryItemsJSON(category):
 
 if __name__ == "__main__":
     # createItem('goggles','protective eyewear', 3, 2)
-    app.secret_key='super_secret_key_129847' # Required for sessions
+    app.secret_key='X7Sm23k39lsGGvD0XcMMkcwoH8cW2fkr1fgDzXK9D8S2V050' # Required for sessions
     app.debug = True
     app.run(host = '0.0.0.0', port = 5000)
