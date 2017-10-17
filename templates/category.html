@@ -31,10 +31,20 @@
                 </a>
                 <br>
             {% endfor %}
+            {% if session.user_id == selected_category.creator_id %}
+                <br>
+                <a>
+                    <i>Edit {{selected_category.name.title()}} Category</i>
+                </a>
+                <br>
+                <a>
+                    <i>Delete {{selected_category.name.title()}} Category</i>
+                </a>
+            {% endif %}
         </section>
         <section class="col-md-6 category-list">
             {% if selected_category %}
-                <h1 class="text-left">{{selected_category.title()}} Items</h1>
+                <h1 class="text-left">{{selected_category.name.title()}} Items</h1>
             {% endif %}
             {% if items %}
                 {% for item in items %}
