@@ -13,7 +13,7 @@
     {% include 'flasher.html' %}
     <div class="row">
         <div class = "col-md-12">
-            <h1>Login to Catalog app</h1>    
+            <h1>Login to Catalog app</h1>
         </div>
         <div class = "col-md-12">
             <!-- GOOGLE SIGN IN BUTTON -->
@@ -50,7 +50,12 @@
     function signInCallBack(authResult) {
         if (authResult.code) {
             // if the authResult contains 'code' we know that authorization was successful
+            // because the one-time use code from Google is present
             // Hide the sign-in button now that the user is authorized
+            console.log('authResult.code back from Google is: ');
+            console.log(authResult.code);
+            console.log('state token from server is:');
+            console.log('{{STATE}}');
             $('#g-signinButton').attr('style', 'display: none');
             $('#fb-button').attr('style', 'display: none');
             // Send the one-time-use code to the server, if the server responds,
