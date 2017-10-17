@@ -44,7 +44,7 @@
             {% endif %}
             <br>
             <br>
-            <a href="{{url_for('createItem')}}">
+            <a href="{{url_for('createItem', category = selected_category.name)}}">
                 <i>Create new item</i>
             </a>
         </section>
