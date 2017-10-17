@@ -40,8 +40,8 @@ app = Flask(__name__)
 @app.route('/catalog/', methods=['GET'])
 def showCatalog():
     categories = session.query(Category).order_by(Category.name)
-    # for category in categories:
-    # pp.pprint(category.serialize)
+    for category in categories:
+        pp.pprint(category.serialize)
     items = session.query(Item).order_by(Item.edited_time).limit(5)
     latest_items = []
     for item in items:
@@ -57,9 +57,11 @@ def showCatalog():
 @app.route('/catalog/<string:category>/items', methods=['GET'])
 def category_display(category):
         # print ('category from GET request is {}'.format(category))
-    category_requested = session.query(Category).filter_by(name = category).first()
+    category_requested = (session.query(Category)
+                          .filter_by(name = category)
+                          .first())
     # pp.pprint (category_to_show.serialize)
-    all_categories = session.query(Category).all()
+    all_categories = session.query(Category).order_by(category.name)
     items_to_show = (session.query(Item)
         .filter_by(category_id = category_requested.id)
         .order_by(Item.name).all())
@@ -86,11 +88,16 @@ def item_display(category, item):
 
 @app.route('/createCategory/', methods = ['GET','POST'])
 def createCategory():
+    print ('login_session is: ')
+    print (login_session)
     # print (request.form)
-    if 'username' not in login_session:
+    if request.method == 'GET' and 'username' in login_session:
         # i.e. if we do not have a logged in user, just show the Catalog
         # does not matter whether it is GET or POST.
-        return redirect(url_for('showCatalog'))
+        return render_template('createCategory.html')
+    elif request.method == 'GET':
+        flash('You need to login first to create a Category')
+        return render_template('login.html')
     elif request.method =='POST':
         print ('test for whether user_id is in login_session')
         print ('user_id' in login_session)
