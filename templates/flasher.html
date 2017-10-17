@@ -1,0 +1,14 @@
+<div class="message-flasher">
+    <div class="row">
+        <div class ='col-md-12 text-left'></div>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class=flashes>
+                {% for message in messages %}
+                    <li>{{message}}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}    
+    </div>
+</div>
