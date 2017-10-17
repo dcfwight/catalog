@@ -56,12 +56,12 @@ def showCatalog():
 
 @app.route('/catalog/<string:category>/items', methods=['GET'])
 def category_display(category):
-        # print ('category from GET request is {}'.format(category))
+    print ('category from GET request is {}'.format(category))
     category_requested = (session.query(Category)
                           .filter_by(name = category)
                           .first())
     # pp.pprint (category_to_show.serialize)
-    all_categories = session.query(Category).order_by(category.name)
+    all_categories = session.query(Category).order_by(Category.name)
     items_to_show = (session.query(Item)
         .filter_by(category_id = category_requested.id)
         .order_by(Item.name).all())
@@ -69,7 +69,7 @@ def category_display(category):
         # pp.pprint (item.serialize)
     return render_template('category.html',
                            categories = all_categories,
-                           selected_category = category_requested.name,
+                           selected_category = category_requested,
                            items = items_to_show)
 
 @app.route('/catalog/<string:category>/<string:item>', methods=['GET'])
