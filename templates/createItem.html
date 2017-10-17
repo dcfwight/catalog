@@ -12,9 +12,13 @@
             <form action="#" method = "post">
                 <div class="form-group">
                     <label for="name">Category:</label>
-                    <select name="category">
+                    <select name="category" required=true>
                     {% for category in categories %}
-                        <option value={{category.name}}>{{category.name.title()}}</option>
+                        {% if category.name == selected_category %}
+                            <option selected value={{category.name}}>{{category.name.title()}}</option>
+                        {% else %}
+                            <option value={{category.name}}>{{category.name.title()}}</option>
+                        {% endif %}
                     {% endfor %}
                     </select>
                     <div class="padding-bottom"></div>
