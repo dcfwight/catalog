@@ -20,7 +20,7 @@
             {% endfor %}
             {% if session.user_id == selected_category.creator_id %}
                 <br>
-                <a>
+                <a href="{{url_for('editCategory', category = selected_category.name)}}">
                     <i>Edit {{selected_category.name.title()}}</i>
                 </a>
                 <br>
