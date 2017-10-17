@@ -37,12 +37,13 @@
             {% endif %}
             {% if items %}
                 {% for item in items %}
-                <a href="{{url_for('item_display',
-                category = selected_category,
-                item = item.name)}}">{{item.name.title()}}</a>
-                <br>
+                    <a href="{{url_for('item_display',
+                    category = selected_category,
+                    item = item.name)}}">{{item.name.title()}}</a>
                 {% endfor %}
             {% endif %}
+            <br>
+            <br>
             <a href="{{url_for('createItem')}}">
                 <i>Create new item</i>
             </a>
