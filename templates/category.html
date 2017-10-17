@@ -34,13 +34,15 @@
             {% if session.user_id == selected_category.creator_id %}
                 <br>
                 <a>
-                    <i>Edit {{selected_category.name.title()}} Category</i>
+                    <i>Edit {{selected_category.name.title()}}</i>
                 </a>
                 <br>
                 <a>
-                    <i>Delete {{selected_category.name.title()}} Category</i>
+                    <i>Delete {{selected_category.name.title()}}</i>
                 </a>
             {% endif %}
+            <br>
+            <a href="{{url_for('createCategory')}}"><i>Create new category</i></a>
         </section>
         <section class="col-md-6 category-list">
             {% if selected_category %}
