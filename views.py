@@ -92,8 +92,7 @@ def createCategory():
     print (login_session)
     # print (request.form)
     if request.method == 'GET' and 'username' in login_session:
-        # i.e. if we do not have a logged in user, just show the Catalog
-        # does not matter whether it is GET or POST.
+        # i.e. we have a logged in user, so go to createCategory.html
         return render_template('createCategory.html')
     elif request.method == 'GET':
         flash('You need to login first to create a Category')
@@ -116,25 +115,35 @@ def createCategory():
             flash('{} created'.format(newCategory.name))
     return redirect(url_for('showCatalog'))
 
-@app.route('/createItem/', methods=['POST'])
+@app.route('/createItem/', methods=['GET','POST'])
 def createItem():
-    pp.pprint (request.form)
-    newItem = Item()
-    if request.form['name']:
-        newItem.name = request.form['name']
-    if request.form['description']:
-        newItem.description = request.form['description']
-    if request.form['category_id']:
-        newItem.category_id = request.form['category_id']
-    if request.form['creator_id']:
-        newItem.creator_id = request.form['creator_id']
-    for key in request.form:
-        print(key, ': ', request.form[key] )
-    newItem.edited_time = int(time.time())
-    session.add(newItem)
-    session.commit()
-    flash('{} created'.format(newItem.name))
-    return jsonify(newItem.serialize)
+    if request.method == 'GET' and 'username' in login_session:
+       # user is logged in, so render the createItem page
+       categories = session.query(Category).all()
+       return render_template('createItem.html', categories = categories)
+    elif request.method == 'GET':
+        # user is NOT logged in, so render the loginpage
+        flash('You need to login first to create a new item.')
+        return render_template('login.html')
+    elif request.method == 'POST':
+        pp.pprint (request.form)
+        newItem = Item()
+        if request.form['name']:
+            newItem.name = request.form['name']
+        if request.form['description']:
+            newItem.description = request.form['description']
+        category_selected = (session.query(Category)
+                       .filter_by(name = request.form['category'])
+                       .one())
+        newItem.category_id = category_selected.id
+        newItem.creator_id = login_session['user_id']
+        for key in request.form:
+            print(key, ': ', request.form[key] )
+        newItem.edited_time = int(time.time())
+        session.add(newItem)
+        session.commit()
+        flash('{} created'.format(newItem.name))
+        return redirect(url_for('category_display', category=category_selected.name))
 
 @app.route('/editCategory/<int:id>', methods = ['POST'])
 def editCategory(id):
