@@ -40,8 +40,8 @@ app = Flask(__name__)
 @app.route('/catalog/', methods=['GET'])
 def showCatalog():
     categories = session.query(Category).order_by(Category.name)
-    for category in categories:
-        pp.pprint(category.serialize)
+    # for category in categories:
+        # pp.pprint(category.serialize)
     items = session.query(Item).order_by(Item.edited_time).limit(5)
     latest_items = []
     for item in items:
@@ -234,6 +234,7 @@ def login():
     state = (''.join(random.choice(string.ascii_uppercase + string.digits)
                      for x in range(32)))
     login_session['state'] = state
+    # if we have a previous 'state', it will be over-written
     # print ('state is {}'.format(state))
     return render_template('login.html', STATE=login_session['state'])
 
@@ -242,6 +243,11 @@ def gconnect():
     print ('POST /gconnect received')
     # Validate the state token
     if request.args.get('state') != login_session['state']:
+        print ('login_session["state"] was: {}'
+               .format(login_session['state']))
+        print ('request.args.get("state") was: {}'
+               .format(request.args.get('state')))
+            
         print ('invalid state parameter')
         response = make_response(json.dumps('Invalid state parameter'), 401)
         response.headers['Content-Type'] = 'application/json'
