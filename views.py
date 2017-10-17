@@ -161,23 +161,30 @@ def createItem(category):
         flash('{} created'.format(newItem.name))
         return redirect(url_for('category_display', category=category_selected.name))
 
-@app.route('/editCategory/<int:id>', methods = ['POST'])
-def editCategory(id):
+@app.route('/<string:category>/edit/', methods = ['GET','POST'])
+def editCategory(category):
+    selected_category = (session.query(Category)
+                               .filter_by(name = category)
+                               .first())
+    if request.method == 'GET':
+        if not login_session['user_id']:
+            flash('You need to log in to edit a Category')
+            return redirect(url_for('login'))
+        elif login_session['user_id'] == selected_category.creator_id:
+            return render_template('editCategory.html')
+        else:
+            flash('You cannot edit the Category as you are not its creator')
+            return redirect(url_for('category_display', category = category))
     if request.method == 'POST':
         print (request.form)
-        category_to_edit = (session.query(Category)
-                            .filter_by(id=id)
-                            .one())
         print ('category to edit retrieved from database')
-        pp.pprint(category_to_edit.serialize)
+        pp.pprint(selected_category.serialize)
         if request.form['name']:
-            category_to_edit.name = request.form['name']
-        if request.form['creator_id']:
-            category_to_edit.creator_id=request.form['creator_id']
-        session.add(category_to_edit)
-        session.commit(category_to_edit)
-        flash('{} edited'.format(category_to_edit.name))
-        return redirect(url_for('showCatalog'))
+            selected_category.name = request.form['name']
+        session.add(selected_category)
+        session.commit()
+        flash('{} edited'.format(selected_category.name))
+        return redirect(url_for('category_display', category = selected_category.name))
 
 @app.route('/editItem/<int:id>', methods=['POST'])
 # will want to combine this into one route, with GET and POST items maybe?
