@@ -10,14 +10,14 @@
     <!-- END PRE-REQUISITES FOR GOOGLE SIGN IN -->
 {% endblock %}
 {% block content %}
-
-    <div class="container">
+    {% include 'flasher.html' %}
+    <div class="row">
         <div class = "col-md-12">
             <h1>Login to Catalog app</h1>    
         </div>
         <div class = "col-md-12">
             <!-- GOOGLE SIGN IN BUTTON -->
-            <div id="signinButton">
+            <div id="g-signinButton">
                  <span class="g-signin"
                     data-scope="openid email"
                     data-clientid="1037169925391-5ef49d1k79tql98tk4fhj5bjunq50ef4.apps.googleusercontent.com"
@@ -29,10 +29,13 @@
                 </span>
             </div>    
         </div>
+    <div class="row">
         <div class="col-md-12">
             <div id='result'></div>    
         </div>
+    </div>
         
+    <div class="row">
         <div class="col-md-12">
             <div id="fb-button">
                 <fb:login-button scope="public_profile,email" onlogin="sendTokenToServer();">
@@ -48,7 +51,8 @@
         if (authResult.code) {
             // if the authResult contains 'code' we know that authorization was successful
             // Hide the sign-in button now that the user is authorized
-            $('#signinButton').attr('style', 'display: none');
+            $('#g-signinButton').attr('style', 'display: none');
+            $('#fb-button').attr('style', 'display: none');
             // Send the one-time-use code to the server, if the server responds,
             // write a 'login successful' message to the web page and then redirect
             // back to the main restaurants page
@@ -109,7 +113,11 @@
             console.log('access_token is:');
             console.log(access_token);
             console.log('Welcome! Fetching your information...');
+            
             FB.api('/me', function(response){
+                // Hide the buttons now we have logged in.
+                $('#g-signinButton').attr('style', 'display: none');
+                $('#fb-button').attr('style', 'display: none');
                 console.log('Successful login for: ' + response.name);
                 $.ajax({
                     type: 'POST',
