@@ -115,12 +115,28 @@ def createCategory():
             flash('{} created'.format(newCategory.name))
     return redirect(url_for('showCatalog'))
 
-@app.route('/createItem/', methods=['GET','POST'])
-def createItem():
+@app.route('/createItem/', methods=['GET'])
+def createItemNoCategory():
+    """creates an Item, when there is no category selected"""
+    if 'username' in login_session:
+        # user is logged in, so render the createItem page
+        categories = session.query(Category).all()
+        return render_template('createItem.html',
+                              categories = categories,
+                              selected_category = '')
+    else:
+        # user is NOT logged in, so render the loginpage
+        flash('You need to login first to create a new item.')
+        return render_template('login.html')
+
+@app.route('/<string:category>/createItem/', methods=['GET','POST'])
+def createItem(category):
     if request.method == 'GET' and 'username' in login_session:
        # user is logged in, so render the createItem page
        categories = session.query(Category).all()
-       return render_template('createItem.html', categories = categories)
+       return render_template('createItem.html',
+                              categories = categories,
+                              selected_category = category)
     elif request.method == 'GET':
         # user is NOT logged in, so render the loginpage
         flash('You need to login first to create a new item.')
@@ -235,7 +251,7 @@ def login():
                      for x in range(32)))
     login_session['state'] = state
     # if we have a previous 'state', it will be over-written
-    # print ('state is {}'.format(state))
+    # print ('curent session state is {}'.format(login_session['state']))
     return render_template('login.html', STATE=login_session['state'])
 
 @app.route('/gconnect', methods = ['POST'])
@@ -591,7 +607,6 @@ def categoryItemsJSON(category):
 #-------------------------------------------------------
 
 if __name__ == "__main__":
-    # createItem('goggles','protective eyewear', 3, 2)
     app.secret_key='X7Sm23k39lsGGvD0XcMMkcwoH8cW2fkr1fgDzXK9D8S2V050' # Required for sessions
     app.debug = True
     app.run(host = '0.0.0.0', port = 5000)
