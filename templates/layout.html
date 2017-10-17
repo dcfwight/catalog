@@ -16,22 +16,27 @@
     {% endblock %}
     </head>
     <body>
+        <div class="container">
         {% block content %}
         {% endblock %}
             
         {% block footer %}
-            <div class="container">
-                <div class="row divider blue">
-                     <div class="col-md-12"></div>
-                </div>    
-            </div>
-            <div class="container">
+            <!--<div class="row divider blue">
+                 <div class="col-md-12"></div>
+            </div>-->
+            <div class = "row">
                 <div class = "col-md-12">
-                    <div id="footer">
-                    &copy; Copyright 2017 by DCF Wight</a> 
-                    </div>    
+                    <hr>
                 </div>
             </div>
+            <div class = "row footer">
+                <div class = "col-md-12">
+                &copy; Copyright 2017 by DCF Wight
+                </div>    
+            </div>
+            
+          
         {% endblock %}
+    </div>
     </body>
 </html>

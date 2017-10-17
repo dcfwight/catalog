@@ -21,8 +21,8 @@
             {% endwith %}
         </div>    
     </div>
-    <div class="container">
-        <div class="col-md-6 category-list">
+    <div class="row">
+        <section class="col-md-6 category-list">
             <h1 class="text-left">Categories</h1>
             {% for category in categories %}
                 <a href = "{{url_for('category_display',
@@ -31,8 +31,8 @@
                 </a>
                 <br>
             {% endfor %}   
-        </div>
-        <div class="col-md-6 category-list">
+        </section>
+        <section class="col-md-6 category-list">
             {% if selected_category %}
                 <h1 class="text-left">{{selected_category.title()}} Items</h1>
             {% endif %}
@@ -44,8 +44,8 @@
                 <br>
                 {% endfor %}
             {% endif %}
-        </div>
-    </div>
+        </section>
+    </scetion>
 
 {% endblock %}
    

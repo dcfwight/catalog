@@ -1,5 +1,5 @@
-<div class="masthead">
-    <div class="container">
+<header>
+    <div class='row masthead'>
         <div class="col-md-3">
             <a href="{{url_for('showCatalog')}}">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
@@ -15,27 +15,28 @@
             {% endif %}
         </div>
     </div>
-    <div class="container">
+    <div class="row">
         <div class="row divider blue">
             <div class="col-md-12"></div>
         </div>    
     </div>
-</div>
+</header>
 <div class="catalog-header">
-    <div class="container">
+    <div class="row">
         <div class='col-md-12 catalog-header'>
             <h1 class='text-left'>Catalog</h1>
             <p class='text-left'>An example Catalog application</p>
         </div>   
     </div>
-    <div class="container">
+    <div class="row">
         <div class="row divider blue">
             <div class="col-md-12"></div>
         </div>    
     </div>
 </div>
 <div class="message-flasher">
-    <div class="container">
+    <div class="row">
+        <div class ='col-md-12 text-left'></div>
         {% with messages = get_flashed_messages() %}
             {% if messages %}
                 <ul class=flashes>
