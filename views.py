@@ -42,7 +42,7 @@ def showCatalog():
     categories = session.query(Category).order_by(Category.name)
     # for category in categories:
         # pp.pprint(category.serialize)
-    items = session.query(Item).order_by(Item.edited_time).limit(5)
+    items = session.query(Item).order_by(Item.edited_time.desc()).limit(5)
     latest_items = []
     for item in items:
         latest_items.append(item.serialize)
@@ -211,6 +211,13 @@ def deleteCategory(category):
             flash('You need to be the Category creator to delete it')
             return redirect(url_for('showCatalog'))
         else:
+            # first we also need to delete all items under this parent category
+            items_to_delete = (session.query(Item)
+                               .filter_by(category_id = category_to_delete.id)
+                               .all())
+            for item in items_to_delete:
+                session.delete(item)
+                session.commit()
             session.delete(category_to_delete)
             session.commit()
             flash('{} deleted'.format(category_to_delete.name))
@@ -229,12 +236,14 @@ def editItem(category_name, item_name):
     edited_time = int(time.time())
     if request.method == 'GET':
         return render_template('editItem.html', item=item, category = category_selected)
-    if request.method=='POST':
+    if request.method=='POST' and  login_session['user_id'] != item_to_edit.creator_id:
+        flash ('You cannot edit that item - only the creator can edit')
+        return redirect(url_for('category_display', category = category_selected.name))
+    if request.method == 'POST' and login_session['user_id'] == item_to_edit.creator_id:
         if request.form['name']:
             item_to_edit.name = request.form['name']
         if request.form['description']:
             item_to_edit.description = request.form['description']
-        
         # for key in request.form:
             # print(key, ': ', request.form[key] )
         if request.form != []:
@@ -244,6 +253,8 @@ def editItem(category_name, item_name):
         flash('{} edited'.format(item_to_edit.name))
         return redirect(url_for('item_display', category=category_selected.name,
             item = item_to_edit.name))
+    else:
+        console.log('error in editItem code')
 
 
 
