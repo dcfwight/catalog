@@ -260,22 +260,23 @@ def editItem(category_name, item_name):
 
 @app.route('/<string:category_name>/<string:item_name>/deleteItem/', methods = ['GET', 'POST'])
 def deleteItem(category_name, item_name):
-    item_to_delete = session.query(Item).filter_by(name = item_name).first()
-    #NEED TO UPDATE THIS CODE - THIS COULD GET THE INCORRECT ITEM - SEE EDITITEM CODE
+    potential_items = session.query(Item).filter_by(name = item_name).all()
+    category_selected = session.query(Category).filter_by(name = category_name).first()
+    item_to_delete = []
+    for item in potential_items:
+        if item.category_id == category_selected.id:
+            item_to_delete = item
+    print ('item to delete  retrieved from database')
+    pp.pprint (item_to_delete.serialize)
+    
     if request.method == 'GET':
-        return render_template('deleteItem.html', item = item_to_delete)
+        return render_template('deleteItem.html', item = item_to_delete, category = category_selected)
     elif request.method == 'POST':
-        item_category_id = item_to_delete.category_id
-        # print ('item_to_delete.category_id is: {}'
-        #        .format(item_to_delete.category_id))
-        category = (session.query(Category)
-                    .filter_by(id = item_category_id)
-                    .one())
-        # print (category.serialize)
+       
         session.delete(item_to_delete)
         session.commit()
         flash('{} deleted'.format(item_to_delete.name))
-        return redirect(url_for('category_display', category = category.name))
+        return redirect(url_for('category_display', category = category_name))
 
 @app.route('/login/', methods=['GET'])
 def login():
