@@ -38,8 +38,9 @@
             {% if items %}
                 {% for item in items %}
                     <a href="{{url_for('item_display',
-                    category = selected_category,
+                    category = selected_category.name,
                     item = item.name)}}">{{item.name.title()}}</a>
+                    <br>
                 {% endfor %}
             {% endif %}
             <br>

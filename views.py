@@ -76,10 +76,11 @@ def category_display(category):
 def item_display(category, item):
     # first get the item. Bear in mind there may be >1 e.g. rugby ball, soccer ball
     item_selected = session.query(Item).filter_by(name=item).all()
+    # print ('Going to query database on category: {}'.format(category))
     category_selected = (session.query(Category)
                          .filter_by(name=category)
                          .first())
-    print (category_selected.name)
+    print (category_selected.serialize)
     for item in item_selected:
         if item.category_id == category_selected.id:
             # print (item.name)
