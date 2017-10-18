@@ -24,7 +24,7 @@
                     <i>Edit {{selected_category.name.title()}}</i>
                 </a>
                 <br>
-                <a>
+                <a href="{{url_for('deleteCategory', category = selected_category.name)}}">
                     <i>Delete {{selected_category.name.title()}}</i>
                 </a>
             {% endif %}
@@ -45,7 +45,7 @@
             <br>
             <br>
             <a href="{{url_for('createItem', category = selected_category.name)}}">
-                <i>Create new item</i>
+                <i>Add item</i>
             </a>
         </section>
     </scetion>
