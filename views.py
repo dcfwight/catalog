@@ -163,14 +163,14 @@ def createItem(category):
 
 @app.route('/<string:category>/edit/', methods = ['GET','POST'])
 def editCategory(category):
-    selected_category = (session.query(Category)
+    category_to_edit = (session.query(Category)
                                .filter_by(name = category)
                                .first())
     if request.method == 'GET':
         if not login_session['user_id']:
             flash('You need to log in to edit a Category')
             return redirect(url_for('login'))
-        elif login_session['user_id'] == selected_category.creator_id:
+        elif login_session['user_id'] == category_to_edit.creator_id:
             return render_template('editCategory.html')
         else:
             flash('You cannot edit the Category as you are not its creator')
@@ -178,13 +178,42 @@ def editCategory(category):
     if request.method == 'POST':
         print (request.form)
         print ('category to edit retrieved from database')
-        pp.pprint(selected_category.serialize)
+        pp.pprint(category_to_edit.serialize)
         if request.form['name']:
-            selected_category.name = request.form['name']
-        session.add(selected_category)
+            category_to_edit.name = request.form['name']
+        session.add(category_to_edit)
         session.commit()
-        flash('{} edited'.format(selected_category.name))
-        return redirect(url_for('category_display', category = selected_category.name))
+        flash('{} edited'.format(category_to_edit.name))
+        return redirect(url_for('category_display', category = category_to_edit.name))
+    
+@app.route('/<string:category>/delete/', methods = ['GET','POST'])
+def deleteCategory(category):
+    category_to_delete = (session.query(Category)
+                               .filter_by(name = category)
+                               .first())
+    if request.method == 'GET':
+        if not login_session['user_id']:
+            flash('You need to log in to delete a Category')
+            return redirect(url_for('login'))
+        elif login_session['user_id'] == category_to_delete.creator_id:
+            return render_template('deleteCategory.html', category = category_to_delete)
+        else:
+            flash('You cannot delete the Category as you are not its creator')
+            return redirect(url_for('category_display', category = category))
+    if request.method == 'POST':
+        print ('category to delete retrieved from database')
+        pp.pprint(category_to_delete.serialize)
+        if not login_session['user_id']:
+            flash('You need to log in to delete a Category')
+            return redirect(url_for('login'))
+        elif login_session['user_id'] != category_to_delete.creator_id:
+            flash('You need to be the Category creator to delete it')
+            return redirect(url_for('showCatalog'))
+        else:
+            session.delete(category_to_delete)
+            session.commit()
+            flash('{} deleted'.format(category_to_delete.name))
+            return redirect(url_for('showCatalog'))
 
 @app.route('/editItem/<int:id>', methods=['POST'])
 # will want to combine this into one route, with GET and POST items maybe?
@@ -214,24 +243,7 @@ def editItem(id):
         return redirect(url_for('item_display', category=parent_category.name,
             item = item_to_edit.name))
 
-@app.route('/deleteCategory/<int:id>', methods = ['GET', 'POST'])
-def deleteCategory(id):
-    category_to_delete = session.query(Category).filter_by(id=id).first()
-    # We also need to delete the items associated with the category
-    items_to_delete = (session.query(Item)
-                       .filter_by(category_id = id).all())
-    if request.method == 'GET':
-        return render_template('deleteCategory.html',
-                category = category_to_delete,
-                items = items_to_delete)
-    elif request.method == 'POST':
-        session.delete(category_to_delete)
-        if (items_to_delete):
-            for item in items_to_delete:
-                session.delete(item)
-        session.commit()
-        flash('{} deleted'.format(category_to_delete.name))
-        return redirect(url_for('showCatalog'))
+
 
 @app.route('/deleteItem/<int:id>', methods = ['GET', 'POST'])
 def deleteItem(id):
