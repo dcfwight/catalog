@@ -236,10 +236,10 @@ def editItem(category_name, item_name):
     edited_time = int(time.time())
     if request.method == 'GET':
         return render_template('editItem.html', item=item, category = category_selected)
-    if request.method=='POST' and  login_session['user_id'] != item_to_edit.creator_id:
+    elif request.method=='POST' and  login_session['user_id'] != item_to_edit.creator_id:
         flash ('You cannot edit that item - only the creator can edit')
         return redirect(url_for('category_display', category = category_selected.name))
-    if request.method == 'POST' and login_session['user_id'] == item_to_edit.creator_id:
+    elif request.method == 'POST' and login_session['user_id'] == item_to_edit.creator_id:
         if request.form['name']:
             item_to_edit.name = request.form['name']
         if request.form['description']:
@@ -271,12 +271,17 @@ def deleteItem(category_name, item_name):
     
     if request.method == 'GET':
         return render_template('deleteItem.html', item = item_to_delete, category = category_selected)
-    elif request.method == 'POST':
-       
+    elif request.method=='POST' and  login_session['user_id'] != item_to_delete.creator_id:
+        flash ('You cannot edit that item - only the creator can delete')
+        return redirect(url_for('category_display', category = category_name))
+    
+    elif request.method == 'POST' and login_session['user_id'] == item_to_delete.creator_id:
         session.delete(item_to_delete)
         session.commit()
         flash('{} deleted'.format(item_to_delete.name))
         return redirect(url_for('category_display', category = category_name))
+    else:
+        console.log('error in deleteItem code')
 
 @app.route('/login/', methods=['GET'])
 def login():
