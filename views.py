@@ -216,39 +216,41 @@ def deleteCategory(category):
             flash('{} deleted'.format(category_to_delete.name))
             return redirect(url_for('showCatalog'))
 
-@app.route('/editItem/<int:id>', methods=['POST'])
-# will want to combine this into one route, with GET and POST items maybe?
-def editItem(id):
+@app.route('/<string:category_name>/<string:item_name>/editItem/', methods=['GET', 'POST'])
+def editItem(category_name, item_name):
+    potential_items = session.query(Item).filter_by(name = item_name).all()
+    category_selected = session.query(Category).filter_by(name = category_name).first()
+    item_to_edit = []
+    for item in potential_items:
+        if item.category_id == category_selected.id:
+            item_to_edit = item
+    print ('item to edit retrieved from database')
+    pp.pprint (item_to_edit.serialize)
     edited_time = int(time.time())
+    if request.method == 'GET':
+        return render_template('editItem.html', item=item, category = category_selected)
     if request.method=='POST':
-        item_to_edit = session.query(Item).filter_by(id = id).one()
-        print ('item to edit retrieved from database')
-        pp.pprint (item_to_edit.serialize)
         if request.form['name']:
             item_to_edit.name = request.form['name']
         if request.form['description']:
             item_to_edit.description = request.form['description']
-        if request.form['category_id']:
-            item_to_edit.category_id = request.form['category_id']
-        if request.form['creator_id']:
-            item_to_edit.user_id = request.form['creator_id']
-        for key in request.form:
-            print(key, ': ', request.form[key] )
+        
+        # for key in request.form:
+            # print(key, ': ', request.form[key] )
         if request.form != []:
             item_to_edit.edited_time = edited_time
         session.add(item_to_edit)
         session.commit()
-        parent_category = session.query(Category)\
-            .filter_by(id = item_to_edit.category_id).first()
         flash('{} edited'.format(item_to_edit.name))
-        return redirect(url_for('item_display', category=parent_category.name,
+        return redirect(url_for('item_display', category=category_selected.name,
             item = item_to_edit.name))
 
 
 
-@app.route('/deleteItem/<int:id>', methods = ['GET', 'POST'])
-def deleteItem(id):
-    item_to_delete = session.query(Item).filter_by(id = id).first()
+@app.route('/<string:category_name>/<string:item_name>/deleteItem/', methods = ['GET', 'POST'])
+def deleteItem(category_name, item_name):
+    item_to_delete = session.query(Item).filter_by(name = item_name).first()
+    #NEED TO UPDATE THIS CODE - THIS COULD GET THE INCORRECT ITEM - SEE EDITITEM CODE
     if request.method == 'GET':
         return render_template('deleteItem.html', item = item_to_delete)
     elif request.method == 'POST':

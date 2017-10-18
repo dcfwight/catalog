@@ -12,6 +12,17 @@
                     <i>Back to {{category}}</i>
                 </a>
             {% endif %}
+            {% if session.user_id == item.creator_id %}
+                <br>
+                <a href="{{url_for('editItem', category_name = category, item_name = item.name)}}">
+                    <i>Edit {{item.name.title()}}</i>
+                </a>
+                <br>
+                <a href="{{url_for('deleteItem', category_name = category, item_name =item.name)}}">
+                    <i>Delete {{item.name.title()}}</i>
+                </a>
+            {% endif %}
+            <br>
         </div>
         
     </div>
