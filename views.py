@@ -172,7 +172,7 @@ def editCategory(category):
             flash('You need to log in to edit a Category')
             return redirect(url_for('login'))
         elif login_session['user_id'] == category_to_edit.creator_id:
-            return render_template('editCategory.html')
+            return render_template('editCategory.html', category = category_to_edit.name)
         else:
             flash('You cannot edit the Category as you are not its creator')
             return redirect(url_for('category_display', category = category))
