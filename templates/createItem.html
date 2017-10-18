@@ -3,15 +3,16 @@
 {% include "header.html" %}
 
     <div class="row banner menu">
-        <div class="col-md-11 col-md-offset-1 padding-none">
+        <div class="col-md-12  padding-none">
             <h1>New Item</h1>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6 col-md-offset-1 padding-top">
+        <div class="col-md-12  padding-top">
             <form action="#" method = "post">
                 <div class="form-group">
                     <label for="name">Category:</label>
+                    <br>
                     <select name="category" required=true>
                     {% for category in categories %}
                         {% if category.name == selected_category %}
