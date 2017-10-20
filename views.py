@@ -10,7 +10,7 @@ import random, string
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
 from models import Base, User, Category, Item
 import time
@@ -43,7 +43,7 @@ bootstrap = Bootstrap(app)
 @app.route('/', methods=['GET'])
 @app.route('/catalog/', methods=['GET'])
 def showCatalog():
-    categories = session.query(Category).order_by(Category.name)
+    categories = session.query(Category).order_by(func.lower(Category.name))
     # for category in categories:
         # pp.pprint(category.serialize)
     items = session.query(Item).order_by(Item.edited_time.desc()).limit(5)
