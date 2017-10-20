@@ -429,13 +429,16 @@ def gconnect():
     print ("login_session['user_id'] is: ")
     print (login_session['user_id'])
     output = ''
+    output += '<div class="container"><div class="row"><div class="col-md-6">'
     output += '<h1>Welcome, '
     output += login_session['username']
     output += '!</h1>'
+    output += '</div><div class="col-md-6">'
     output += '<img src="'
     output += login_session['picture']
-    output += '"style="width: 300px; height: 300px; border-\
-        radius: 150px;-webkit-border-radius: 150px;-moz-border-radius:150px;">'
+    output += '"style="width: 250px; height: 250px; border-\
+        radius: 50px;-webkit-border-radius: 150px;-moz-border-radius:150px;">'
+    output += '</div></div>'
     flash("you are now logged in as {}".format(login_session['username']))
     # print (output)
     return output
