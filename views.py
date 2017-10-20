@@ -428,17 +428,25 @@ def gconnect():
     print(login_session)
     print ("login_session['user_id'] is: ")
     print (login_session['user_id'])
+
+    return login_welcome(login_session['username'], login_session['picture'])
+
+def login_welcome(username, picture=''):
     output = ''
-    output += '<div class="container"><div class="row"><div class="col-md-6">'
+    # output += '<div class="container">
+    output += '<div class="row"><div class="col-md-6">'
     output += '<h1>Welcome, '
-    output += login_session['username']
+    output += username
     output += '!</h1>'
     output += '</div><div class="col-md-6">'
-    output += '<img src="'
-    output += login_session['picture']
-    output += '"style="width: 250px; height: 250px; border-\
-        radius: 50px;-webkit-border-radius: 150px;-moz-border-radius:150px;">'
-    output += '</div></div>'
+    if picture:
+        output += '<img src="'
+        output += picture
+        output += '"style="width: 250px; height: 250px; border-\
+            radius: 50px;-webkit-border-radius: 150px;-moz-border-radius:150px;">'
+    output += '</div>'
+    output += '</div>'
+    output += '<div class="row"><div class="col-md-12"><h2>Redirecting.....</h2></div></div>'
     flash("you are now logged in as {}".format(login_session['username']))
     # print (output)
     return output
@@ -546,18 +554,7 @@ def fbconnect():
         createUser(login_session)
     login_session['user_id'] = userId
 
-    print(login_session)
-    output = ''
-    output += '<h1>Welcome, '
-    output += login_session['username']
-    output += '!</h1>'
-    output += '<img src="'
-    output += login_session['picture']
-    output += '"style="width: 300px; height: 300px; border-\
-        radius: 150px;-webkit-border-radius: 150px;-moz-border-radius:150px;">'
-    flash("you are now logged in as %s"%login_session['username'])
-    # print (output)
-    return output
+    return login_welcome(login_session['username'], login_session['picture'])
 
 @app.route('/fbdisconnect')
 # Note that this is now supplemented by the generic /disconnect function

@@ -13,8 +13,10 @@
 <div class="container">
     <div class="row">
         <div class = "col-md-12">
-            <h1>Login to Catalog app</h1>
+            <h1 id="login_greeting">Login to Catalog app</h1>
         </div>
+    </div>
+    <div class="row">
         <div class = "col-md-12">
             <!-- GOOGLE SIGN IN BUTTON -->
             <div id="g-signinButton">
@@ -29,10 +31,6 @@
                 </span>
             </div>    
         </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div id='result'></div>    
-        </div>
     </div>
         
     <div class="row">
@@ -42,6 +40,11 @@
                     <a href='javascript:sendTokenToServer()'>Login with Facebook</a>
                 </fb:login-button>
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id='result'></div>    
         </div>
     </div>
 </div>
@@ -74,10 +77,11 @@
                     // Handle or verify the server response if necessary.
                     if (result) {
                         console.log('result receieved');
-                        $('#result').html('Login Successful!</br>' + result + '</br>Redirecting...');
+                        $('#login_greeting').html('<h1>Login Successful!<h1>');
+                        $('#result').html(result);
                         setTimeout(function() {
                             window.location.href = "/catalog";
-                        }, 4000);
+                        }, 1500);
 
                     } else if (authResult.error) {
                         console.log('There was an error: ' + authResult.error);
@@ -135,10 +139,11 @@
                         // Handle or verify the server response if necessary.
                         if (result) {
                             console.log(result);
-                            $('#result').html('Login Successful!</br>' + result + '</br>Redirecting...');
+                            $('#login_greeting').html('<h1>Login Successful!<h1>');
+                            $('#result').html(result);
                             setTimeout(function(){
                                 window.location.href="/catalog";
-                            }, 2000);
+                            }, 1500);
                         }
                         else {
                             $('#result').html('Failed to make a server-side call. Check your configuration and console');
