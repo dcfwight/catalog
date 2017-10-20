@@ -2,29 +2,28 @@
 {% block title %}Item{% endblock %}
 
 {% block content %}
-    {% include 'header.html' %}
-    <div class="row">
-        <div class = 'col-md-12'>
-            {% if item %}
-                <h1 class = 'text-left'>{{item.name.title()}}</h1>
-                <p class = 'text-left'>{{item.description.capitalize()}}</p>
-                <a href="{{url_for('category_display', category=category)}}">
-                    <i>Back to {{category}}</i>
-                </a>
-            {% endif %}
-            {% if session.user_id == item.creator_id %}
+    <div class="container">
+        <div class="row">
+            <div class = 'col-md-12'>
+                {% if item %}
+                    <h1 class = 'text-left'>{{item.name.title()}}</h1>
+                    <p class = 'text-left'>{{item.description.capitalize()}}</p>
+                    <a href="{{url_for('category_display', category=category)}}">
+                        <i>Back to {{category}}</i>
+                    </a>
+                {% endif %}
+                {% if session.user_id == item.creator_id %}
+                    <br>
+                    <a href="{{url_for('editItem', category_name = category, item_name = item.name)}}">
+                        <i>Edit {{item.name.title()}}</i>
+                    </a>
+                    <br>
+                    <a href="{{url_for('deleteItem', category_name = category, item_name =item.name)}}">
+                        <i>Delete {{item.name.title()}}</i>
+                    </a>
+                {% endif %}
                 <br>
-                <a href="{{url_for('editItem', category_name = category, item_name = item.name)}}">
-                    <i>Edit {{item.name.title()}}</i>
-                </a>
-                <br>
-                <a href="{{url_for('deleteItem', category_name = category, item_name =item.name)}}">
-                    <i>Delete {{item.name.title()}}</i>
-                </a>
-            {% endif %}
-            <br>
+            </div>  
         </div>
-        
     </div>
-    
 {% endblock %}

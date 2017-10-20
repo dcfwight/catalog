@@ -3,6 +3,9 @@ from flask import request, url_for
 from flask import session as login_session
 # session is a dictionary that stores users login details for the duration of their session
 
+from flask_bootstrap import Bootstrap
+# flask Boostrap extension to help with implementing Bootstrap.
+
 import random, string
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
@@ -35,6 +38,7 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 app = Flask(__name__)
+bootstrap = Bootstrap(app)
 
 @app.route('/', methods=['GET'])
 @app.route('/catalog/', methods=['GET'])

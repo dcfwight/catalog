@@ -2,6 +2,7 @@
 {% block title %}Catalog{% endblock %}
 
 {% block content %}
+<div class="container">
     <div class="row">
         <h1>Deleting {{item.name}} from  {{category.name}}</h1>
         <p class="important text-left">Are you sure you want to delete {{item.name}}?</p>
@@ -9,4 +10,5 @@
             <input type="submit" value="Yes">
         </form>
     </div>
+</div>
 {% endblock %}
