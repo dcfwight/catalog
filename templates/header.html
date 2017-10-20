@@ -22,10 +22,22 @@
         </div>
     <div class="catalog-header">
         <div class="row">
-            <div class='col-md-12 catalog-header'>
+            <div class='col-md-9 catalog-header'>
                 <h1 class='text-left'>Catalog</h1>
                 <p class='text-left'>An example Catalog application</p>
-            </div>   
+            </div>
+            <div class='col-md-3'>
+                {% if 'username' in session %}
+                    {% if session['picture'] %}
+                        <img src={{session['picture']}}
+                            alt= "anonymous elephant" width="100" align="right">
+                    {% else %}
+                        <img src="{{url_for('static', filename='images/anon_elephant.jpg')}}"
+                            alt= "anonymous elephant" width="100" align="right">
+                    {% endif %}
+                {% endif %}
+            </div>
+            </div>
         </div>
         <div class="row">
             <div class="row divider blue">
