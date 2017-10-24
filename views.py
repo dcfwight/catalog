@@ -6,6 +6,14 @@ from flask import session as login_session
 from flask_bootstrap import Bootstrap
 # flask Boostrap extension to help with implementing Bootstrap.
 
+from flask_wtf import FlaskForm
+# Form class - allows for creation in Python, then rendered. Better validation
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired
+class NameForm(FlaskForm):
+    name = StringField('Name: ', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
 import random, string
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
@@ -40,7 +48,7 @@ session = DBSession()
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods= ['GET'])
 @app.route('/catalog/', methods=['GET'])
 def showCatalog():
     categories = session.query(Category).order_by(func.lower(Category.name))
@@ -93,31 +101,25 @@ def item_display(category, item):
 
 @app.route('/createCategory/', methods = ['GET','POST'])
 def createCategory():
-    print ('login_session is: ')
-    print (login_session)
-    # print (request.form)
-    if request.method == 'GET' and 'username' in login_session:
-        # i.e. we have a logged in user, so go to createCategory.html
-        return render_template('createCategory.html')
-    elif request.method == 'GET':
-        flash('You need to login first to create a Category')
-        return render_template('login.html')
-    elif request.method =='POST':
-        print ('test for whether user_id is in login_session')
-        print ('user_id' in login_session)
-        print (login_session['user_id'])
-        # we are only proceeding if there is a logged in user.
-        user_id = login_session['user_id']
-        if request.form['name']:
-            category_name = request.form['name']
+    # This function uses the Flask-wtf form, to demonstrate it. The others don't
+    # again, to demonstrate the different methods.
+    form = NameForm()
+    if form.validate_on_submit() and 'username' in login_session:
+        category_name = form.name.data
         if session.query(Category).filter_by(name = category_name).first():
             flash('Category: {} already exits'.format(category_name))
         else:
             newCategory = Category(name=category_name,
-                                   creator_id=user_id)
+                                   creator_id=login_session['user_id'])
             session.add(newCategory)
             session.commit()
             flash('{} created'.format(newCategory.name))
+    elif 'username' in login_session:
+        # i.e. we have a logged in user, so go to createCategory.html
+        return render_template('createCategory.html', form=form)
+    else:
+        flash('You need to login first to create a Category')
+        return render_template('login.html')
     return redirect(url_for('showCatalog'))
 
 @app.route('/createItem/', methods=['GET'])
