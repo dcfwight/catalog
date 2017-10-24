@@ -49,7 +49,7 @@ class Category(Base):
         'name' : self.name,
         'creator_id': self.creator_id
         }
-
+    
 class Item(Base):
     __tablename__ = 'item'
     id = Column(Integer, primary_key=True)
