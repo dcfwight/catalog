@@ -55,8 +55,7 @@ def showCatalog():
     for item in latest_items:
         item['category_name'] = (session.query(Category)
                                  .filter_by(id = item['category_id'])
-                                 .one()
-                                 .name)
+                                 .one().name)
     return render_template('catalog.html', categories=categories,
                            latest_items = latest_items)
 
