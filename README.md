@@ -58,6 +58,10 @@ and google_client_secret.json
 1. Add self-populating database to allow for demonstration from initial loading.
 1. Add in improved error-handling / reporting.
 
+## Sources used
+- Udacity lecture videos, transcripts and notes
+- O'Reilly book - "Flask Web Development" by Miguel Grinberg. Will use this a lot for implementing the improvements.
+
 ### Creator
 Doug Wight, dcfwight@gmail.com
 
