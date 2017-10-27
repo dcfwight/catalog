@@ -1,4 +1,3 @@
-'''Server for Catalog app'''''
 import random
 import string
 import pprint
