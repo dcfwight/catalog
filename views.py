@@ -252,7 +252,7 @@ def edit_item(category_name, item_name):
     item_to_edit = []
     for item in potential_items:
         if item.category_id == category_selected.id:
-            item_to_edit = item.serialize
+            item_to_edit = item
     print('item to edit retrieved from database')
     # pp.pprint(item_to_edit.serialize)
     # print("item_to_edit['name'] is: ")
@@ -260,7 +260,8 @@ def edit_item(category_name, item_name):
     edited_time = int(time.time())
     if request.method == 'GET':
         return render_template('editItem.html',
-                               item=item_to_edit, category=category_selected)
+                               item=item_to_edit.serialize,
+                               category=category_selected)
     elif request.method == 'POST' and (login_session['user_id']
                                        != item_to_edit.creator_id):
         flash('You cannot edit that item - only the creator can edit')
@@ -696,6 +697,20 @@ def category_items_json(category):
                       .filter_by(category_id=category_selected.id)
                       .all())
     return jsonify(CategoryItemList=[i.serialize for i in category_items])
+
+@app.route('/api/v1.0/<string:category>/<string:item>', methods=['GET'])
+def category_item_json(category, item):
+    '''returns API endpoint of item in category'''
+    category_selected = (session.query(Category)
+                         .filter_by(name=category)
+                         .first())
+    pp.pprint(category_selected.serialize)
+    items_selected = (session.query(Item).filter_by(name=item).all())
+    for i in items_selected:
+        if i.category_id == category_selected.id:
+            return jsonify(i.serialize)   
+    return ('could not find item {} in category {}'
+            .format(item, category))
 
 #-------------------------------------------------------------------------------
 
