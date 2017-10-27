@@ -27,17 +27,17 @@ Website to display categories and items in a catalog
 3 api endpoints are set up which return the same info, in JSON format.
 Note you will need to populate the database with a few items to make the APIs work
 
-#####Categories
+###Categories
 - [http://localhost:5000/api/v1.0/categories](http://localhost:5000/api/v1.0/categories)
 - provides JSON object of all current categories
-#####Items
+###Items
 - [http://localhost:5000/api/v1.0/items](http://localhost:5000/api/v1.0/items)
 - provides JSON object of all items
-#####Items in a category
+###Items in a category
 - [http://localhost:5000/api/v1.0/:category/items](http://localhost:5000/api/v1.0/:category/items)
 - provides JSON object of items in a category.
 - e.g. localhost:5000/api/v1.0/hockey/items
-####Specific item
+###Specific item
 - [http://localhost:5000/api/v1.0/:category/item](http://localhost:5000/api/v1.0/:category/item)
 - provides JSON object on specific item
 - NOTE you need to pass in category too - there may be two or more categories with "ball" as an item - e.g. golf, soccer.
