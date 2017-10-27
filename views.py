@@ -1,7 +1,8 @@
 from flask import Flask, flash, jsonify, redirect, render_template
 from flask import request, url_for
 from flask import session as login_session
-# session is a dictionary that stores users login details for the duration of their session
+# session is a dictionary that stores users login details
+# for the duration of their session
 
 from flask_bootstrap import Bootstrap
 # flask Boostrap extension to help with implementing Bootstrap.
@@ -18,16 +19,18 @@ from models import Base, User, Category, Item
 import time
 
 from oauth2client.client import flow_from_clientsecrets
-# creates a flow objectfrom clientsecrets JSON file. Stores client Id and other oAuth parameters
+# creates a flow objectfrom clientsecrets JSON file.
+# Stores client Id and other oAuth parameters
 from oauth2client.client import FlowExchangeError
-# this will catch errors when trying to exchange an authorisation code for an access token.
+# this will catch errors when trying to exchange
+# an authorisation code for an access token.
 from oauth2client.client import AccessTokenCredentials
 # this is required to fix Oauth error with JSON objects
 
-
 import httplib2 # comprehensive http clientlibrary in python
 import json
-from flask import make_response #converts the return value from a function into a real response object to send to client
+from flask import make_response #converts the return value from a function
+# into a real response object to send to client
 import requests
 
 GOOGLE_CLIENT_ID = json.loads(open('google_client_secret.json','r')
@@ -79,7 +82,8 @@ def category_display(category):
 
 @app.route('/catalog/<string:category>/<string:item>', methods=['GET'])
 def item_display(category, item):
-    # first get the item. Bear in mind there may be >1 e.g. rugby ball, soccer ball
+    # first get the item. Bear in mind there may be >1
+    # e.g. rugby ball, soccer ball
     item_selected = session.query(Item).filter_by(name=item).all()
     # print ('Going to query database on category: {}'.format(category))
     category_selected = (session.query(Category)
@@ -159,7 +163,8 @@ def createItem(category):
         session.add(newItem)
         session.commit()
         flash('{} created'.format(newItem.name))
-        return redirect(url_for('category_display', category=category_selected.name))
+        return redirect(url_for('category_display',
+                                category=category_selected.name))
 
 @app.route('/<string:category>/edit/', methods = ['GET','POST'])
 def editCategory(category):
@@ -171,7 +176,8 @@ def editCategory(category):
             flash('You need to log in to edit a Category')
             return redirect(url_for('login'))
         elif login_session['user_id'] == category_to_edit.creator_id:
-            return render_template('editCategory.html', category = category_to_edit.name)
+            return render_template('editCategory.html',
+                                   category = category_to_edit.name)
         else:
             flash('You cannot edit the Category as you are not its creator')
             return redirect(url_for('category_display', category = category))
@@ -184,7 +190,8 @@ def editCategory(category):
         session.add(category_to_edit)
         session.commit()
         flash('{} edited'.format(category_to_edit.name))
-        return redirect(url_for('category_display', category = category_to_edit.name))
+        return redirect(url_for('category_display',
+                                category = category_to_edit.name))
     
 @app.route('/<string:category>/delete/', methods = ['GET','POST'])
 def deleteCategory(category):
@@ -196,7 +203,8 @@ def deleteCategory(category):
             flash('You need to log in to delete a Category')
             return redirect(url_for('login'))
         elif login_session['user_id'] == category_to_delete.creator_id:
-            return render_template('deleteCategory.html', category = category_to_delete)
+            return render_template('deleteCategory.html',
+                                   category = category_to_delete)
         else:
             flash('You cannot delete the Category as you are not its creator')
             return redirect(url_for('category_display', category = category))
@@ -222,10 +230,13 @@ def deleteCategory(category):
             flash('{} deleted'.format(category_to_delete.name))
             return redirect(url_for('showCatalog'))
 
-@app.route('/<string:category_name>/<string:item_name>/editItem/', methods=['GET', 'POST'])
+@app.route('/<string:category_name>/<string:item_name>/editItem/',
+           methods=['GET', 'POST'])
 def editItem(category_name, item_name):
-    potential_items = session.query(Item).filter_by(name = item_name).all()
-    category_selected = session.query(Category).filter_by(name = category_name).first()
+    potential_items = (session.query(Item)
+                       .filter_by(name = item_name).all())
+    category_selected = (session.query(Category)
+                        .filter_by(name = category_name).first())
     item_to_edit = []
     for item in potential_items:
         if item.category_id == category_selected.id:
@@ -234,11 +245,15 @@ def editItem(category_name, item_name):
     pp.pprint (item_to_edit.serialize)
     edited_time = int(time.time())
     if request.method == 'GET':
-        return render_template('editItem.html', item=item, category = category_selected)
-    elif request.method=='POST' and  login_session['user_id'] != item_to_edit.creator_id:
+        return render_template('editItem.html',
+                               item=item, category = category_selected)
+    elif request.method=='POST' and (login_session['user_id']
+                                     != item_to_edit.creator_id):
         flash ('You cannot edit that item - only the creator can edit')
-        return redirect(url_for('category_display', category = category_selected.name))
-    elif request.method == 'POST' and login_session['user_id'] == item_to_edit.creator_id:
+        return redirect(url_for('category_display',
+                                category = category_selected.name))
+    elif request.method == 'POST' and (login_session['user_id']
+                                       == item_to_edit.creator_id):
         if request.form['name']:
             item_to_edit.name = request.form['name']
         if request.form['description']:
@@ -257,10 +272,12 @@ def editItem(category_name, item_name):
 
 
 
-@app.route('/<string:category_name>/<string:item_name>/deleteItem/', methods = ['GET', 'POST'])
+@app.route('/<string:category_name>/<string:item_name>/deleteItem/',
+           methods = ['GET', 'POST'])
 def deleteItem(category_name, item_name):
     potential_items = session.query(Item).filter_by(name = item_name).all()
-    category_selected = session.query(Category).filter_by(name = category_name).first()
+    category_selected = (session.query(Category)
+                         .filter_by(name = category_name).first())
     item_to_delete = []
     for item in potential_items:
         if item.category_id == category_selected.id:
@@ -269,12 +286,15 @@ def deleteItem(category_name, item_name):
     pp.pprint (item_to_delete.serialize)
     
     if request.method == 'GET':
-        return render_template('deleteItem.html', item = item_to_delete, category = category_selected)
-    elif request.method=='POST' and  login_session['user_id'] != item_to_delete.creator_id:
+        return render_template('deleteItem.html',
+                            item = item_to_delete, category = category_selected)
+    elif request.method=='POST' and (login_session['user_id']
+                                     != item_to_delete.creator_id):
         flash ('You cannot edit that item - only the creator can delete')
         return redirect(url_for('category_display', category = category_name))
     
-    elif request.method == 'POST' and login_session['user_id'] == item_to_delete.creator_id:
+    elif request.method == 'POST' and (login_session['user_id']
+                                       == item_to_delete.creator_id):
         session.delete(item_to_delete)
         session.commit()
         flash('{} deleted'.format(item_to_delete.name))
@@ -317,17 +337,21 @@ def gconnect():
         # Upgrade the authorization code into a credentials object
         oauth_flow = flow_from_clientsecrets('google_client_secret.json',
                                              scope='')
-        # this creates an oauth_flow object and adds the client_secrets info to it
-        # client_secrets.json was the json object downloaded from console.developers.google.com for your app
-        # needed to add some redirect uri s to the google api, and then re-download as it was causing errors.
+        # creates an oauth_flow object and adds the client_secrets info to it
+        # client_secrets.json was the json object downloaded from
+        # console.developers.google.com for your app
+        # needed to add some redirect uri s to the google api,
+        # and then re-download as it was causing errors.
         oauth_flow.redirect_uri = 'postmessage'
-        # this specifies it is the one time code flow that the server will be sending off.
+        # this specifies it is the one time code flow
+        # that the server will be sending off.
         credentials = oauth_flow.step2_exchange(code)
-        # this initiates the exchange with the step2_exchange module, passing in the secret info.
+        # this initiates the exchange with the step2_exchange module,
+        # passing in the secret info.
         print ('\nGoogle: Successfully updated the authorization code into'
                'a credentials object')
         # it exchanges the authorisation code for a credentials object.
-        # If all goes well, the response from Google will be a credentials object
+        # If all goes well the response from Google will be a credentials object
         # that will be stored in the variable 'credentials'
     except FlowExchangeError:
         print ('FlowExchangeError triggered')
@@ -374,7 +398,8 @@ def gconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     else:
-        print("Google Token's client ID matches this current app's Google Client ID")
+        print("Google Token's client ID matches this current app's\
+              Google Client ID")
 
     # Check to see if user is already logged in
     stored_credentials = login_session.get('credentials')
@@ -384,7 +409,8 @@ def gconnect():
             'Current user is already connected'), 200)
         response.headers['Content-Type'] = 'application/json'
 
-    # Assuming all the if statements are passed - you have not returned a response and the access token is valid
+    # Assuming all the if statements are passed - you have not returned
+    # a response and the access token is valid
 
     # Store the access token in the session for later use
     login_session['provider'] = 'google'
@@ -438,10 +464,12 @@ def login_welcome(username, picture=''):
         output += '<img src="'
         output += picture
         output += '"style="width: 250px; height: 250px; border-\
-            radius: 50px;-webkit-border-radius: 150px;-moz-border-radius:150px;">'
+            radius: 50px;-webkit-border-radius: 150px;\
+            -moz-border-radius:150px;">'
     output += '</div>'
     output += '</div>'
-    output += '<div class="row"><div class="col-md-12"><h2>Redirecting.....</h2></div></div>'
+    output += '<div class="row"><div class="col-md-12">\
+              <h2>Redirecting.....</h2></div></div>'
     flash("you are now logged in as {}".format(login_session['username']))
     # print (output)
     return output
@@ -642,9 +670,10 @@ def categoryItemsJSON(category):
                       .all())
     return jsonify(CategoryItemList = [i.serialize for i in category_items])
 
-#-------------------------------------------------------
+#-------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    app.secret_key='X7Sm23k39lsGGvD0XcMMkcwoH8cW2fkr1fgDzXK9D8S2V050' # Required for sessions
+    app.secret_key='X7Sm23k39lsGGvD0XcMMkcwoH8cW2fkr1fgDzXK9D8S2V050'
+    # Required for sessions
     app.debug = True
     app.run(host = '0.0.0.0', port = 5000)
