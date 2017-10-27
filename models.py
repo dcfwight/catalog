@@ -13,14 +13,17 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String(256), index=True, nullable=False)
     password_hash = Column(String(64))
-    email = Column(String(256), nullable=False)
+    email = Column(String(256), nullable=False, unique=True)
     picture = Column(String(250))
 
-    # hashing is a one-way process - we store the hashed password, and NEVER the actual password.
+    # hashing is a one-way process - we store the hashed password,
+    # and NEVER the actual password.
     def hash_password(self, password):
         self.password_hash = pwd_context.encrypt(password)
 
-    # So, to verify it, we take the offered password, run the hashing process again, and check against the hashed password which is stored.
+    # So, to verify it, we take the offered password,
+    # run the hashing process again, and check against the hashed password
+    # which is stored.
     def verify_password(self, password):
         return pwd_context.verify(password, self.password_hash)	
 
@@ -37,9 +40,10 @@ class User(Base):
 class Category(Base):
     __tablename__ = 'category'
     id = Column(Integer, primary_key=True)
-    name = Column(String(32), nullable=False, index=True)
+    name = Column(String(32), nullable=False, index=True, unique=True)
     creator_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
+    
     
     @property
     def serialize(self):
@@ -53,7 +57,7 @@ class Category(Base):
 class Item(Base):
     __tablename__ = 'item'
     id = Column(Integer, primary_key=True)
-    name = Column(String(32), index=True)
+    name = Column(String(32), nullable=False, index=True)
     description = Column(String(1024))
     category_id = Column(Integer, ForeignKey('category.id'))
     category = relationship(Category)
@@ -76,7 +80,9 @@ class Item(Base):
 
 
 engine = create_engine('sqlite:///catalog.db')
-# this is pointed to the database we will create and use - NOTE the three backslashes
+# this is pointed to the database we will create and use
+# NOTE the three backslashes
 
 Base.metadata.create_all(engine)
-# goes into the database and adds the classes we will create as new tables in the database.
+# goes into the database and adds the classes we will create
+# as new tables in the database.
