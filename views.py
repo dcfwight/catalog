@@ -693,7 +693,7 @@ def category_items_json(category):
     category_selected = (session.query(Category)
                          .filter_by(name=category)
                          .first())
-    category_items = (session.query(Item)
+    category_items = (session.query(Item)     
                       .filter_by(category_id=category_selected.id)
                       .all())
     return jsonify(CategoryItemList=[i.serialize for i in category_items])
