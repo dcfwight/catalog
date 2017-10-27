@@ -1,4 +1,10 @@
 '''Server for Catalog app'''''
+import random
+import string
+import pprint
+import json
+import time
+
 from flask import Flask, flash, jsonify, redirect, render_template
 from flask import request, url_for
 from flask import session as login_session
@@ -12,15 +18,9 @@ from flask_bootstrap import Bootstrap
 
 from forms import NameForm
 
-import random
-import string
-import pprint
-
-
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
 from models import Base, User, Category, Item
-import time
 
 from oauth2client.client import flow_from_clientsecrets
 # creates a flow objectfrom clientsecrets JSON file.
@@ -32,7 +32,7 @@ from oauth2client.client import AccessTokenCredentials
 # this is required to fix Oauth error with JSON objects
 
 import httplib2 # comprehensive http clientlibrary in python
-import json
+
 
 import requests
 
@@ -314,7 +314,7 @@ def delete_item(category_name, item_name):
         flash('{} deleted'.format(item_to_delete.name))
         return redirect(url_for('category_display', category=category_name))
     else:
-        console.log('error in deleteItem code')
+        print('error in deleteItem code')
 
 @app.route('/login/', methods=['GET'])
 def login():
@@ -453,13 +453,13 @@ def gconnect():
     login_session['email'] = data['email']
 
     # see if user exists in our database. If it doesn't, make a new one
-    userId = getUserID(login_session['email'])
-    if not userId:
-        createUser(login_session)
+    user_id = get_user_id(login_session['email'])
+    if not user_id:
+        create_user(login_session)
         print('User was NOT in database, so user was created')
     else:
         print('User was already in database, so no changes made')
-    login_session['user_id'] = userId
+    login_session['user_id'] = user_id
 
     print('login_session is: ')
     print(login_session)
@@ -553,7 +553,7 @@ def fbconnect():
     fb_ll_token = json.loads(result)
     print('\nFacebook long-lived server-side token is: ')
     pp.pprint(fb_ll_token)
-    tokenString = 'access_token='+fb_ll_token['access_token']
+    token_string = 'access_token='+fb_ll_token['access_token']
 
     # The access token must be stored in the login session in order to
     # properly log out. NOTE this was a change from original Udacity lecture
@@ -563,7 +563,7 @@ def fbconnect():
 
     #use token to get user info from API
     userinfo_url = ('https://graph.facebook.com/v2.8/me?{}'
-                    '&fields=name,id,email'.format(tokenString))
+                    '&fields=name,id,email'.format(token_string))
     h = httplib2.Http()
     result = h.request(userinfo_url, 'GET')[1].decode()
 
@@ -580,7 +580,7 @@ def fbconnect():
     # Get user picture
     # facebook uses a seperate API call to get user picture
     url = ('https://graph.facebook.com/v2.2/me/'
-           'picture?{}&redirect=0&height=200&width=200'.format(tokenString))
+           'picture?{}&redirect=0&height=200&width=200'.format(token_string))
     h = httplib2.Http()
     result = h.request(url, 'GET')[1].decode()
     data = json.loads(result)
@@ -591,9 +591,9 @@ def fbconnect():
     login_session['picture'] = data['data']['url']
 
     # see if user exists in our database. If it doesn't, make a new one
-    userId = getUserID(login_session['email'])
+    userId = get_user_id(login_session['email'])
     if not userId:
-        createUser(login_session)
+        create_user(login_session)
     login_session['user_id'] = userId
 
     return login_welcome(login_session['username'], login_session['picture'])
@@ -645,25 +645,26 @@ def disconnect():
         return redirect(url_for('show_catalog'))
 
 
-def getUserID(email):
+def get_user_id(email):
     '''return user.id based on email'''
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
     except:
+        print('error occured on retrieving user.id')
         return None
 
-def getUserInfo(user_id):
+def get_user_info(user_id):
     '''return user based on user_id'''
     user = session.query(User).filter_by(id=user_id).one()
     return user
 
-def createUser(login_session):
+def create_user(login_session):
     '''Creates new user and inserts into database'''
-    newUser = User(username=login_session['username'],
-                   email=login_session['email'],
-                   picture=login_session['picture'])
-    session.add(newUser)
+    new_user = User(username=login_session['username'],
+                    email=login_session['email'],
+                    picture=login_session['picture'])
+    session.add(new_user)
     session.commit()
     user = (session.query(User)
             .filter_by(email=login_session['email'])
@@ -675,19 +676,19 @@ def createUser(login_session):
 #--------------------------------------------------------
 # Endpoints
 @app.route('/api/v1.0/categories', methods=['GET'])
-def categoriesJSON():
+def categories_json():
     '''returns API endpoint of categories'''
     categories = session.query(Category).all()
     return jsonify(CategoryList=[i.serialize for i in categories])
 
 @app.route('/api/v1.0/items', methods=['GET'])
-def itemsJSON():
+def items_json():
     '''returns API endpoint of all items'''
     items = session.query(Item).all()
     return jsonify(ItemList=[i.serialize for i in items])
 
 @app.route('/api/v1.0/<string:category>/items/', methods=['GET'])
-def categoryItemsJSON(category):
+def category_items_json(category):
     '''returns API endpoint of all items by Category'''
     category_selected = (session.query(Category)
                          .filter_by(name=category)
