@@ -15,20 +15,26 @@
                 {% endfor %}
                 {% if session.user_id == selected_category.creator_id %}
                     <br>
-                    <a href="{{url_for('editCategory', category = selected_category.name)}}">
+                    <a href="{{url_for('editCategory',
+                    category = selected_category.name)}}">
                         <i>Edit {{selected_category.name.title()}}</i>
                     </a>
                     <br>
-                    <a href="{{url_for('deleteCategory', category = selected_category.name)}}">
+                    <a href="{{url_for('deleteCategory',
+                    category = selected_category.name)}}">
                         <i>Delete {{selected_category.name.title()}}</i>
                     </a>
                 {% endif %}
                 <br>
-                <a href="{{url_for('createCategory')}}"><i>Create new category</i></a>
+                <a href="{{url_for('createCategory')}}">
+                    <i>Create new category</i>
+                </a>
             </div>
             <div class="col-md-6">
                 {% if selected_category %}
-                    <h1 class="text-left">{{selected_category.name.title()}} Items</h1>
+                    <h1 class="text-left">
+                        {{selected_category.name.title()}} Items
+                    </h1>
                 {% endif %}
                 {% if items %}
                     {% for item in items %}
@@ -40,7 +46,8 @@
                 {% endif %}
                 <br>
                 <br>
-                <a href="{{url_for('createItem', category = selected_category.name)}}">
+                <a href="{{url_for('createItem',
+                category = selected_category.name)}}">
                     <i>Add item</i>
                 </a>
             </div>
