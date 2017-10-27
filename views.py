@@ -116,7 +116,7 @@ def create_category():
             flash('Category: {} already exits'.format(category_name))
         else:
             new_category = Category(name=category_name,
-                                   creator_id=login_session['user_id'])
+                                    creator_id=login_session['user_id'])
             session.add(new_category)
             session.commit()
             flash('{} created'.format(new_category.name))
@@ -253,13 +253,15 @@ def edit_item(category_name, item_name):
     item_to_edit = []
     for item in potential_items:
         if item.category_id == category_selected.id:
-            item_to_edit = item
+            item_to_edit = item.serialize
     print('item to edit retrieved from database')
-    pp.pprint(item_to_edit.serialize)
+    # pp.pprint(item_to_edit.serialize)
+    # print("item_to_edit['name'] is: ")
+    # print(item_to_edit['name'])
     edited_time = int(time.time())
     if request.method == 'GET':
         return render_template('editItem.html',
-                               item=item, category=category_selected)
+                               item=item_to_edit, category=category_selected)
     elif request.method == 'POST' and (login_session['user_id']
                                        != item_to_edit.creator_id):
         flash('You cannot edit that item - only the creator can edit')
