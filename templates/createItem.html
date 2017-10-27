@@ -15,9 +15,9 @@
                         <select name="category" required=true>
                         {% for category in categories %}
                             {% if category.name == selected_category %}
-                                <option selected value={{category.name}}>{{category.name.title()}}</option>
+                                <option  selected value="{{category.name}}">{{category.name.title()}}</option>
                             {% else %}
-                                <option value={{category.name}}>{{category.name.title()}}</option>
+                                <option value="{{category.name}}">{{category.name.title()}}</option>
                             {% endif %}
                         {% endfor %}
                         </select>

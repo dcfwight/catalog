@@ -52,7 +52,7 @@ bootstrap = Bootstrap(app)
 
 @app.route('/', methods=['GET'])
 @app.route('/catalog/', methods=['GET'])
-def showCatalog():
+def show_catalog():
     '''returns Catalog template'''
     categories = session.query(Category).order_by(func.lower(Category.name))
     # for category in categories:
@@ -104,8 +104,8 @@ def item_display(category, item):
             return (render_template('item.html',
                                     item=item, category=category))
 
-@app.route('/createCategory/', methods=['GET', 'POST'])
-def createCategory():
+@app.route('/create_category/', methods=['GET', 'POST'])
+def create_category():
     '''handles creation of a new category'''
     # This function uses the Flask-wtf form, to demonstrate it. The others don't
     # again, to demonstrate the different methods.
@@ -115,21 +115,21 @@ def createCategory():
         if session.query(Category).filter_by(name=category_name).first():
             flash('Category: {} already exits'.format(category_name))
         else:
-            newCategory = Category(name=category_name,
+            new_category = Category(name=category_name,
                                    creator_id=login_session['user_id'])
-            session.add(newCategory)
+            session.add(new_category)
             session.commit()
-            flash('{} created'.format(newCategory.name))
+            flash('{} created'.format(new_category.name))
     elif 'username' in login_session:
         # i.e. we have a logged in user, so go to createCategory.html
         return render_template('createCategory.html', form=form)
     else:
         flash('You need to login first to create a Category')
         return render_template('login.html')
-    return redirect(url_for('showCatalog'))
+    return redirect(url_for('show_catalog'))
 
 @app.route('/createItem/', methods=['GET'])
-def createItemNoCategory():
+def create_item_no_category():
     """creates an Item, when there is no category selected"""
     if 'username' in login_session:
         # user is logged in, so render the createItem page
@@ -143,7 +143,7 @@ def createItemNoCategory():
         return render_template('login.html')
 
 @app.route('/<string:category>/createItem/', methods=['GET', 'POST'])
-def createItem(category):
+def create_item(category):
     '''handles creation of a new Item'''
     if request.method == 'GET' and 'username' in login_session:
         # user is logged in, so render the createItem page
@@ -157,27 +157,27 @@ def createItem(category):
         return render_template('login.html')
     elif request.method == 'POST':
         pp.pprint(request.form)
-        newItem = Item()
+        new_item = Item()
         if request.form['name']:
-            newItem.name = request.form['name']
+            new_item.name = request.form['name']
         if request.form['description']:
-            newItem.description = request.form['description']
+            new_item.description = request.form['description']
         category_selected = (session.query(Category)
                              .filter_by(name=request.form['category'])
                              .one())
-        newItem.category_id = category_selected.id
-        newItem.creator_id = login_session['user_id']
+        new_item.category_id = category_selected.id
+        new_item.creator_id = login_session['user_id']
         for key in request.form:
             print(key, ': ', request.form[key])
-        newItem.edited_time = int(time.time())
-        session.add(newItem)
+        new_item.edited_time = int(time.time())
+        session.add(new_item)
         session.commit()
-        flash('{} created'.format(newItem.name))
+        flash('{} created'.format(new_item.name))
         return redirect(url_for('category_display',
                                 category=category_selected.name))
 
 @app.route('/<string:category>/edit/', methods=['GET', 'POST'])
-def editCategory(category):
+def edit_category(category):
     '''handles editing of an existing category'''
     category_to_edit = (session.query(Category)
                         .filter_by(name=category)
@@ -205,7 +205,7 @@ def editCategory(category):
                                 category=category_to_edit.name))
 
 @app.route('/<string:category>/delete/', methods=['GET', 'POST'])
-def deleteCategory(category):
+def delete_category(category):
     '''handles deletion of an existing category'''
     category_to_delete = (session.query(Category)
                           .filter_by(name=category)
@@ -228,7 +228,7 @@ def deleteCategory(category):
             return redirect(url_for('login'))
         elif login_session['user_id'] != category_to_delete.creator_id:
             flash('You need to be the Category creator to delete it')
-            return redirect(url_for('showCatalog'))
+            return redirect(url_for('show_catalog'))
         else:
             # first we also need to delete all items under this parent category
             items_to_delete = (session.query(Item)
@@ -240,11 +240,11 @@ def deleteCategory(category):
             session.delete(category_to_delete)
             session.commit()
             flash('{} deleted'.format(category_to_delete.name))
-            return redirect(url_for('showCatalog'))
+            return redirect(url_for('show_catalog'))
 
-@app.route('/<string:category_name>/<string:item_name>/editItem/',
+@app.route('/<string:category_name>/<string:item_name>/edit_item/',
            methods=['GET', 'POST'])
-def editItem(category_name, item_name):
+def edit_item(category_name, item_name):
     '''handles editing of an existing item'''
     potential_items = (session.query(Item)
                        .filter_by(name=item_name).all())
@@ -281,11 +281,11 @@ def editItem(category_name, item_name):
         return redirect(url_for('item_display', category=category_selected.name,
                                 item=item_to_edit.name))
     else:
-        console.log('error in editItem code')
+        console.log('error in edit_item code')
 
 @app.route('/<string:category_name>/<string:item_name>/deleteItem/',
            methods=['GET', 'POST'])
-def deleteItem(category_name, item_name):
+def delete_item(category_name, item_name):
     '''handles deletion of an existing item'''
     potential_items = session.query(Item).filter_by(name=item_name).all()
     category_selected = (session.query(Category)
@@ -637,10 +637,10 @@ def disconnect():
         del login_session['user_id']
         del login_session['provider']
         flash("You have been successfully logged out")
-        return redirect(url_for('showCatalog'))
+        return redirect(url_for('show_catalog'))
     else:
         flash("You were not logged in to begin with!")
-        return redirect(url_for('showCatalog'))
+        return redirect(url_for('show_catalog'))
 
 
 def getUserID(email):

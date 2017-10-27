@@ -6,7 +6,7 @@
     <div class="row">
         <h1>Deleting {{item.name}} from  {{category.name}}</h1>
         <p class="important text-left">Are you sure you want to delete {{item.name}}?</p>
-        <form action="{{url_for('deleteItem', item_name=item.name, category_name=category.name)}}", method = 'post'>
+        <form action="{{url_for('delete_item', item_name=item.name, category_name=category.name)}}", method = 'post'>
             <input type="submit" value="Yes">
         </form>
     </div>
