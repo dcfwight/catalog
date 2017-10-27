@@ -1,5 +1,5 @@
 catalog.db
-/cat_venv
+/cat_env
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
