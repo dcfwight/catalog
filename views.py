@@ -40,7 +40,8 @@ pp = pprint.PrettyPrinter(indent=4)
 GOOGLE_CLIENT_ID = json.loads(open('google_client_secret.json', 'r')
                               .read())['web']['client_id']
 
-engine = create_engine('sqlite:///catalog.db')
+engine = create_engine('postgresql+psycopg2://doug:udacious@catalogdbinstance.c6lebb60ocvv.us-east-1.rds.amazonaws.com:5432/catalog_db')
+# engine = create_engine('sqlite:///catalog.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)

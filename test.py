@@ -1,11 +1,13 @@
-# START of configration code
+# Simple test to see if we can connect to AWS Postgres, using psycopg2
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine
 from passlib.apps import custom_app_context as pwd_context # password hashing
 
+
 import psycopg2
+from sqlalchemy import create_engine
 
 Base = declarative_base()
 # END of configuration code
@@ -80,11 +82,11 @@ class Item(Base):
         }
 
 
-# engine = create_engine('postgresql://doug:udacious@catalogdbinstance.c6lebb60ocvv.us-east-1.rds.amazonaws.com:5432/catalog_db')
-engine = create_engine('sqlite:///catalog.db')
-# this is pointed to the database we will create and use
-# NOTE the three backslashes
+try:
+    engine = create_engine('postgresql+psycopg2://doug:udacious@catalogdbinstance.c6lebb60ocvv.us-east-1.rds.amazonaws.com:5432/catalog_db')
+    Base.metadata.create_all(engine)
+    print ('tables created')
+except:
+    print ("unable to connect to AWS postgres database using psycopg2")
 
-Base.metadata.create_all(engine)
-# goes into the database and adds the classes we will create
-# as new tables in the database.
+print ('done')
