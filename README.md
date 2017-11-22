@@ -2,6 +2,7 @@
 Website to display categories and items in a catalog
 
 ## Aim of site
+- Updated to include postgresql
 - Authorisation of users through use of third-party authenticators (Google & facebook)
 - Use of CRUD functionality in accessing database
 - Usage of Flask server and rendering web pages
