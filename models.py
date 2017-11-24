@@ -79,12 +79,26 @@ class Item(Base):
             'creator_id': self.creator_id
         }
 
+user = 'dougwight'
+password = 'Linton'
+host = 'localhost'
+port = 5432 # default port for postgresql
+database = 'catalog'
+
+url = 'postgresql://{}:{}@{}:{}/{}'.format(user,password,host,port,database)
+
+engine = create_engine(url, client_encoding='utf8')
+
 
 # engine = create_engine('postgresql://doug:udacious@catalogdbinstance.c6lebb60ocvv.us-east-1.rds.amazonaws.com:5432/catalog_db')
-engine = create_engine('sqlite:///catalog.db')
+# engine = create_engine('sqlite:///catalog.db')
 # this is pointed to the database we will create and use
 # NOTE the three backslashes
+
+# Session = sessionmaker(db)
+# session = Session()
 
 Base.metadata.create_all(engine)
 # goes into the database and adds the classes we will create
 # as new tables in the database.
+

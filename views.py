@@ -40,7 +40,17 @@ pp = pprint.PrettyPrinter(indent=4)
 GOOGLE_CLIENT_ID = json.loads(open('google_client_secret.json', 'r')
                               .read())['web']['client_id']
 
-engine = create_engine('postgresql+psycopg2://doug:udacious@catalogdbinstance.c6lebb60ocvv.us-east-1.rds.amazonaws.com:5432/catalog_db')
+user = 'dougwight'
+password = 'Linton'
+host = 'localhost'
+port = 5432 # default port for postgresql
+database = 'catalog'
+
+url = 'postgresql://{}:{}@{}:{}/{}'.format(user,password,host,port,database)
+
+engine = create_engine(url, client_encoding='utf8')
+
+# engine = create_engine('postgresql+psycopg2://doug:udacious@catalogdbinstance.c6lebb60ocvv.us-east-1.rds.amazonaws.com:5432/catalog_db')
 # engine = create_engine('sqlite:///catalog.db')
 Base.metadata.bind = engine
 
@@ -128,7 +138,7 @@ def create_category():
         return render_template('login.html')
     return redirect(url_for('show_catalog'))
 
-@app.route('/createItem/', methods=['GET'])
+@app.route('/createItem/', methods=['GET','POST'])
 def create_item_no_category():
     """creates an Item, when there is no category selected"""
     if 'username' in login_session:
@@ -456,7 +466,7 @@ def gconnect():
     # see if user exists in our database. If it doesn't, make a new one
     user_id = get_user_id(login_session['email'])
     if not user_id:
-        create_user(login_session)
+        user_id=create_user(login_session)
         print('User was NOT in database, so user was created')
     else:
         print('User was already in database, so no changes made')
