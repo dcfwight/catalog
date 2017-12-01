@@ -1,9 +1,10 @@
 # Catalog project
 Website to display categories and items in a catalog
 
-## Aim of site
-- Updated to include postgresql
-- Authorisation of users through use of third-party authenticators (Google & facebook)
+## Fuctionality
+- Creation of local postgresql database by running models.py. Has three different classes - User, Category, Item.
+Updated to include postgresql
+- Authorisation of users through use of OAuth 2.0 third-party authenticators (Google & facebook)
 - Use of CRUD functionality in accessing database
 - Usage of Flask server and rendering web pages
 - Usage of Bootstrap to create attractive front end
@@ -12,11 +13,12 @@ Website to display categories and items in a catalog
 - Python3
 
 ## Installation
-1. Clone the repository to your local computer
-1. Install a virtual environment
-1. Load the required modules into your virtual environment using requirements.txt
-1. Set up the database with the command line script > python3 models.py
-1. Run the server with the command line script > python3 views.py
+1. Clone the repository to your local computer.
+1. Install a virtual environment - e.g. `virtualenv venv`.
+1. Activate the virtual environment - e.g. `source venv/bin/activate`
+1. Load the required modules into your virtual environment using requirements.txt - e.g. `pip install -r requirements.txt`
+1. Set up the database with the command line script `$ python3 models.py`
+1. Run the server with the command line script: `$ python3 views.py`
 1. The Flask server will now listen on port 5000. Open a browser and navigate to
 [http://localhost:5000](http://localhost:5000)
 
