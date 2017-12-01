@@ -31,8 +31,7 @@ Updated to include postgresql
 Note you will need to populate the database with a few items to make the APIs work
 
 ### Categories
-<a href="http://localhost:5000/api/v1.0/categories/" target="_blank">http://localhost:5000/api/v1.0/categories</a>
- [http://localhost:5000/api/v1.0/categories](http://localhost:5000/api/v1.0/categories)
+- [http://localhost:5000/api/v1.0/categories](http://localhost:5000/api/v1.0/categories)
 - provides JSON object of all current categories
 ### Items
 - [http://localhost:5000/api/v1.0/items](http://localhost:5000/api/v1.0/items)
