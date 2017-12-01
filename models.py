@@ -5,8 +5,6 @@ from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine
 from passlib.apps import custom_app_context as pwd_context # password hashing
 
-import psycopg2
-
 Base = declarative_base()
 # END of configuration code
 
@@ -90,7 +88,7 @@ url = 'postgresql://{}:{}@{}:{}/{}'.format(user,password,host,port,database)
 engine = create_engine(url, client_encoding='utf8')
 
 
-# engine = create_engine('postgresql://doug:udacious@catalogdbinstance.c6lebb60ocvv.us-east-1.rds.amazonaws.com:5432/catalog_db')
+# NB - do not delete following line - this shows how to set up a simple sqlite database
 # engine = create_engine('sqlite:///catalog.db')
 # this is pointed to the database we will create and use
 # NOTE the three backslashes
