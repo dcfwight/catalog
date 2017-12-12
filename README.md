@@ -1,13 +1,15 @@
 # Catalog project
-Website to display categories and items in a catalog
+Website to display categories and items in a catalog running on localhost
 
 ## Fuctionality
 - Creation of local postgresql database by running models.py. Has three different classes - User, Category, Item.
 Updated to include postgresql
-- Authorisation of users through use of OAuth 2.0 third-party authenticators (Google & facebook)
+- Authentication of users through use of OAuth 2.0 third-party authenticators (Google & facebook)
+- Authorisation of users to edit particular categories though database check.
 - Use of CRUD functionality in accessing database
 - Usage of Flask server and rendering web pages
 - Usage of Bootstrap to create attractive front end
+- Creation of JSON endpoints
 
 ## Language
 - Python3
