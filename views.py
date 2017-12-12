@@ -67,9 +67,6 @@ bootstrap = Bootstrap(app)
 def show_catalog():
 	'''returns Catalog template'''
 	categories = session.query(Category).order_by(func.lower(Category.name))
-	for category in categories:
-		pp.pprint(category.serialize)
-		logging.info(category.serialize)
 	items = session.query(Item).order_by(Item.edited_time.desc()).limit(5)
 	latest_items = []
 	for item in items:
@@ -84,17 +81,21 @@ def show_catalog():
 @app.route('/catalog/<string:category>/items', methods=['GET'])
 def category_display(category):
 	'''returns category template'''
-	print('category from GET request is {}'.format(category))
 	category_requested = (session.query(Category)
 						  .filter_by(name=category)
 						  .first())
-	# pp.pprint(category_to_show.serialize)
+	logging.info('category requested: {}'.format(category))
+	logging.info('category returned from database:')
+	logging.info(category_requested.serialize)
 	all_categories = session.query(Category).order_by(Category.name)
+	
 	items_to_show = (session.query(Item)
 					 .filter_by(category_id=category_requested.id)
 					 .order_by(Item.name).all())
-	# for item in items_to_show:
-		# pp.pprint(item.serialize)
+	
+	logging.info('items to show:')
+	for item in items_to_show:
+		logging.info(item.serialize)
 	return render_template('category.html',
 						   categories=all_categories,
 						   selected_category=category_requested,
@@ -106,14 +107,13 @@ def item_display(category, item):
 	# first get the item. Bear in mind there may be >1
 	# e.g. rugby ball, soccer ball
 	item_selected = session.query(Item).filter_by(name=item).all()
-	# print('Going to query database on category: {}'.format(category))
+	logging.info('Query database on category: {}'.format(category))
 	category_selected = (session.query(Category)
 						 .filter_by(name=category)
 						 .first())
-	print(category_selected.serialize)
+
 	for item in item_selected:
 		if item.category_id == category_selected.id:
-			# print(item.name)
 			return (render_template('item.html',
 									item=item, category=category))
 
@@ -169,19 +169,18 @@ def create_item(category):
 		flash('You need to login first to create a new item.')
 		return render_template('login.html')
 	elif request.method == 'POST':
-		pp.pprint(request.form)
+		
 		new_item = Item()
 		if request.form['name']:
 			new_item.name = request.form['name']
 		if request.form['description']:
 			new_item.description = request.form['description']
 		category_selected = (session.query(Category)
-							 .filter_by(name=request.form['category'])
-							 .one())
+							.filter_by(name=request.form['category'])
+							.one())
 		new_item.category_id = category_selected.id
 		new_item.creator_id = login_session['user_id']
-		for key in request.form:
-			print(key, ': ', request.form[key])
+		
 		new_item.edited_time = int(time.time())
 		session.add(new_item)
 		session.commit()
@@ -206,9 +205,7 @@ def edit_category(category):
 			flash('You cannot edit the Category as you are not its creator')
 			return redirect(url_for('category_display', category=category))
 	if request.method == 'POST':
-		print(request.form)
-		print('category to edit retrieved from database')
-		pp.pprint(category_to_edit.serialize)
+		
 		if request.form['name']:
 			category_to_edit.name = request.form['name']
 		session.add(category_to_edit)
@@ -234,8 +231,7 @@ def delete_category(category):
 			flash('You cannot delete the Category as you are not its creator')
 			return redirect(url_for('category_display', category=category))
 	if request.method == 'POST':
-		print('category to delete retrieved from database')
-		pp.pprint(category_to_delete.serialize)
+		
 		if not login_session['user_id']:
 			flash('You need to log in to delete a Category')
 			return redirect(url_for('login'))
@@ -267,10 +263,9 @@ def edit_item(category_name, item_name):
 	for item in potential_items:
 		if item.category_id == category_selected.id:
 			item_to_edit = item
-	print('item to edit retrieved from database')
-	# pp.pprint(item_to_edit.serialize)
-	# print("item_to_edit['name'] is: ")
-	# print(item_to_edit['name'])
+	logging.info('item to edit retrieved from database')
+	logging.info(item_to_edit.serialize)
+	logging.info("item_to_edit['name'] is: {}".format(item_to_edit.serialize['name']))
 	edited_time = int(time.time())
 	if request.method == 'GET':
 		return render_template('editItem.html',
@@ -287,8 +282,7 @@ def edit_item(category_name, item_name):
 			item_to_edit.name = request.form['name']
 		if request.form['description']:
 			item_to_edit.description = request.form['description']
-		# for key in request.form:
-			# print(key, ': ', request.form[key] )
+		
 		if request.form != []:
 			item_to_edit.edited_time = edited_time
 		session.add(item_to_edit)
@@ -310,8 +304,6 @@ def delete_item(category_name, item_name):
 	for item in potential_items:
 		if item.category_id == category_selected.id:
 			item_to_delete = item
-	print('item to delete  retrieved from database')
-	pp.pprint(item_to_delete.serialize)
 
 	if request.method == 'GET':
 		return render_template('deleteItem.html',
@@ -328,7 +320,7 @@ def delete_item(category_name, item_name):
 		flash('{} deleted'.format(item_to_delete.name))
 		return redirect(url_for('category_display', category=category_name))
 	else:
-		print('error in deleteItem code')
+		logging.error('error in deleteItem code')
 
 @app.route('/login/', methods=['GET'])
 def login():
@@ -338,7 +330,6 @@ def login():
 					 for x in range(32)))
 	login_session['state'] = state
 	# if we have a previous 'state', it will be over-written
-	# print('curent session state is {}'.format(login_session['state']))
 	return render_template('login.html', STATE=login_session['state'])
 
 @app.route('/gconnect', methods=['POST'])
@@ -384,8 +375,8 @@ def gconnect():
 		# If all goes well the response from Google will be a credentials object
 		# that will be stored in the variable 'credentials'
 	except FlowExchangeError:
-		print('FlowExchangeError triggered')
-		print(FlowExchangeError)
+		logging.error('FlowExchangeError triggered')
+		logging.error(FlowExchangeError)
 		response = make_response(json.dumps(
 			'Failed to upgrade the authorization code'), 401)
 		response.headers['Content-Type'] = 'application/json'
@@ -393,7 +384,7 @@ def gconnect():
 
 	# Check that the access token is valid
 	access_token = credentials.access_token
-	print('Google access_token is: {}'.format(access_token))
+	logging.info('Google access_token is: {}'.format(access_token))
 	url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={}'
 		   .format(access_token))
 	# append the access token to the url and Google apiserver
@@ -402,13 +393,13 @@ def gconnect():
 	result = json.loads(h.request(url, 'GET')[1].decode())
 	# If there was an error in the access token info, abort
 	if result.get('error') is not None:
-		print('There was an error in the Google Access token')
-		print(result['error'])
+		logging.error('There was an error in the Google Access token')
+		logging.error(result['error'])
 		response = make_response(json.dumps(result.get('error')), 500)
 		response.headers['Content-Type'] = 'application/json'
 		return response
 	else:
-		print('Google Access token info has no error')
+		logging.info('Google Access token info has no error')
 
 	# Verify that the access token is used for the intended user:
 	gplus_id = credentials.id_token['sub']
@@ -418,17 +409,17 @@ def gconnect():
 		response.headers['Content-Type'] = 'application/json'
 		return response
 	else:
-		print("Token's user ID MATCHES given User ID")
+		logging.info("Token's user ID MATCHES given User ID")
 
 	# Verify that the access token is valid for this app
 	if result['issued_to'] != GOOGLE_CLIENT_ID:
 		response = make_response(
 			json.dumps("Google Token's client ID does not match app's"), 401)
-		print("Google Token's client ID does not match app's")
+		logging.error("Google Token's client ID does not match app's")
 		response.headers['Content-Type'] = 'application/json'
 		return response
 	else:
-		print("Google Token's client ID matches this current app's\
+		logging.info("Google Token's client ID matches this current app's\
 			  Google Client ID")
 
 	# Check to see if user is already logged in
@@ -459,8 +450,8 @@ def gconnect():
 	params = {'access_token': credentials.access_token, 'alt':'json'}
 	answer = requests.get(userinfo_url, params=params)
 	data = json.loads(answer.text)
-	print("\nGoogle user info is: ")
-	pp.pprint(data)
+	logging.info("\nGoogle user info is: ")
+	logging.info(data)
 
 	login_session['username'] = data["name"]
 	login_session['picture'] = data["picture"]
@@ -470,15 +461,13 @@ def gconnect():
 	user_id = get_user_id(login_session['email'])
 	if not user_id:
 		user_id=create_user(login_session)
-		print('User was NOT in database, so user was created')
+		logging.info('User was NOT in database, so user was created')
 	else:
-		print('User was already in database, so no changes made')
-	login_session['user_id'] = user_id
+		logging.info('User was already in database, so no changes made')
+		login_session['user_id'] = user_id
 
-	print('login_session is: ')
-	print(login_session)
-	print("login_session['user_id'] is: ")
-	print(login_session['user_id'])
+	logging.info('login_session is: {}'.format(login_session))
+	logging.info("login_session['user_id'] is: {}".format(login_session['user_id']))
 
 	return login_welcome(login_session['username'], login_session['picture'])
 
@@ -510,11 +499,11 @@ def login_welcome(username, picture=''):
 def gdisconnect():
 	'''disconnects user authenticated by google and removes information'''
 	# Note that this is now supplemented by the generic /disconnect function
-	print('user attempting to gdisconnect - log out as google user')
+	logging.info('user attempting to gdisconnect - log out as google user')
 	# only disconnect a connected user.
 	credentials = login_session.get('credentials')
-	print('login_session.get("credentials") is: ')
-	print(credentials)
+	logging.info('login_session.get("credentials") is: {}'.format(credentials))
+	
 	if credentials is None:
 		response = make_response(json.dumps('Current user not connected'), 401)
 		response.headers['Content-Type'] = 'application/json'
@@ -533,8 +522,10 @@ def gdisconnect():
 		return {'message': 'Successfully disconnected',
 				'status': 200}
 	else:
+		logging.error('Failed to revoke token for given user')
 		return {'message':'Failed to revoke token for given user',
 				'status': 400}
+	
 
 ################################################################################
 ## FACEBOOK connection ##
@@ -565,8 +556,8 @@ def fbconnect():
 	h = httplib2.Http()
 	result = h.request(url, 'GET')[1].decode()
 	fb_ll_token = json.loads(result)
-	print('\nFacebook long-lived server-side token is: ')
-	pp.pprint(fb_ll_token)
+	logging.info('\nFacebook long-lived server-side token is: {}'.format(fb_ll_token))
+	
 	token_string = 'access_token='+fb_ll_token['access_token']
 
 	# The access token must be stored in the login session in order to
@@ -582,8 +573,8 @@ def fbconnect():
 	result = h.request(userinfo_url, 'GET')[1].decode()
 
 	data = json.loads(result)
-	print('\nFacebook User info is: ')
-	pp.pprint(data)
+	logging.info('\nFacebook User info is: {}'.format(data))
+	
 	login_session['provider'] = 'facebook'
 	login_session['username'] = data["name"]
 	login_session['email'] = data['email']
@@ -599,8 +590,7 @@ def fbconnect():
 	result = h.request(url, 'GET')[1].decode()
 	data = json.loads(result)
 
-	print('\nFacebook: result from user picture request is: ')
-	pp.pprint(data)
+	logging.info('Facebook: result from user picture request is: ')
 
 	login_session['picture'] = data['data']['url']
 
@@ -628,9 +618,11 @@ def fbdisconnect():
 	pp.pprint(result)
 	# NB the deletions for lognin_session are all handled in disconnect()
 	if result['success']:
-		print('Facebook logout completed successfully')
+		
+		logging.info('Facebook logout completed successfully')
 		return "you have been logged out"
 	else:
+		logging.error("error in logging out")
 		return "error in logging out"
 
 @app.route('/disconnect')
@@ -665,7 +657,7 @@ def get_user_id(email):
 		user = session.query(User).filter_by(email=email).one()
 		return user.id
 	except:
-		print('error occured on retrieving user.id')
+		logging.error('error occured on retrieving user.id')
 		return None
 
 def get_user_info(user_id):
@@ -732,5 +724,5 @@ if __name__ == "__main__":
 	app.secret_key = 'X7Sm23k39lsGGvD0XcMMkcwoH8cW2fkr1fgDzXK9D8S2V050'
 	# Required for sessions
 	app.debug = True
-	console.log('Server listening on port 5000')
+	print('Server listening on port 5000')
 	app.run(host='0.0.0.0', port=5000)
