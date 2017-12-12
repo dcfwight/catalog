@@ -13,6 +13,8 @@ from flask import session as login_session
 from flask import make_response #converts the return value from a function
 # into a real response object to send to client
 
+from flask import Blueprint
+
 from flask_bootstrap import Bootstrap
 # flask Boostrap extension to help with implementing Bootstrap.
 
@@ -59,8 +61,14 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+# Blueprint
+from routes.dummy import dummy # this is a test one for Blueprints
+from routes.login import login
+
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
+app.register_blueprint(dummy, url_prefix='/giraffe')
+# app.register_blueprint(login, url_prefix='/login')
 
 @app.route('/', methods=['GET'])
 @app.route('/catalog/', methods=['GET'])
