@@ -68,5 +68,7 @@ and google_client_secret.json
 - Udacity lecture videos, transcripts and notes
 - O'Reilly book - "Flask Web Development" by Miguel Grinberg. Will use this a lot for implementing the improvements.
 
+small change for git testing - delete!
+
 ### Creator
 Doug Wight, dcfwight@gmail.com
