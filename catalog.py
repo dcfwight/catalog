@@ -13,6 +13,8 @@ from flask import session as login_session
 from flask import make_response #converts the return value from a function
 # into a real response object to send to client
 
+from flask_script import Manager #Adds a command-line parser
+
 # from flask import Blueprint
 
 from flask_bootstrap import Bootstrap
@@ -67,6 +69,7 @@ session = DBSession()
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
+manager = Manager(app)
 
 
 @app.route('/', methods=['GET'])
@@ -730,6 +733,5 @@ def category_item_json(category, item):
 if __name__ == "__main__":
 	app.secret_key = 'X7Sm23k39lsGGvD0XcMMkcwoH8cW2fkr1fgDzXK9D8S2V050'
 	# Required for sessions
-	app.debug = True
-	print('Server listening on localhost:5000')
-	app.run(host='0.0.0.0', port=5000)
+	print('Server running on localhost:5000/')
+	manager.run()
