@@ -10,6 +10,7 @@ DATABASE = 'catalog'
 class Config:
 	SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string camel176'
 	SQLALCHEMY_COMMIT_ON_TEARDOWN = True
+	SQLALCHEMY_TRACK_MODIFICATIONS = False
 	
 	@staticmethod
 	def init_app(app):
@@ -17,7 +18,7 @@ class Config:
 
 class DevelopmentConfig(Config):
 	DEBUG = True
-	POSTGRESQL_DATABASE_URI = os.environ.get('POSTGRESQL_DATABASE_URI') or \
+	SQLALCHEMY_DATABASE_URI = os.environ.get('POSTGRESQL_DATABASE_URI') or \
 		'postgresql://{}:{}@{}:{}/{}'.format(USER,PASSWORD,HOST,PORT,DATABASE)
 	
 config = {
