@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block title %}Delete Category{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class = "row">
+            <div class="col-md-12 padding-none">
+                <h1>You are about to delete the category {{category.name.title()}}</h1>
+                <p class="important text-left">Are you sure?</p>
+                {% if items %}
+                    <p class="text-left">There are the following items in that category that will also be deleted</p>
+                    <ul>
+                        {% for i in items %}
+                            <li>{{i.name}}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <form action="{{url_for('.delete_category', category = category.name)}}", method = 'post'>
+                    <input type="submit" value="Yes">
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,49 @@
+<div class="container">
+        <div class='row masthead'>
+            <div class="col-md-3">
+                <a href="{{url_for('.show_catalog')}}">
+                    <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                    Show All Categories
+                </a>
+            </div>
+            <div class="col-md-6"></div>
+            <div class="col-md-3 text-right">
+                {% if 'username' not in session %}
+                    <a href="{{url_for('.login')}}">Click Here to Log in</a>
+                {% else %}
+                    <a href="{{url_for('.disconnect')}}">Disconnect</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="row divider blue">
+                <div class="col-md-12"></div>
+            </div>    
+        </div>
+    <div class="catalog-header">
+        <div class="row">
+            <div class='col-md-9 catalog-header'>
+                <h1 class='text-left'>Catalog</h1>
+                <p class='text-left'>An example Catalog application</p>
+            </div>
+            <div class='col-md-3'>
+                {% if 'username' in session %}
+                    {% if session['picture'] %}
+                        <img src={{session['picture']}}
+                            alt= "anonymous elephant" width="100" align="right">
+                    {% else %}
+                        <img src="{{url_for('static', filename='images/anon_elephant.jpg')}}"
+                            alt= "anonymous elephant" width="100" align="right">
+                    {% endif %}
+                {% endif %}
+            </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="row divider blue">
+                <div class="col-md-12"></div>
+            </div>    
+        </div>
+    </div>
+</div>
+{% include 'flasher.html' %}
