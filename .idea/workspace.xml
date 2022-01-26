@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c667b81a-d414-4d2f-aead-796bce7db023" name="Changes" comment="Bring requirements up to date - fix vulnerabilities" />
+    <list default="true" id="c667b81a-d414-4d2f-aead-796bce7db023" name="Changes" comment="Bring requirements up to date - fix vulnerabilities">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -75,6 +78,8 @@
       <option name="presentableId" value="Default" />
       <updated>1643211709833</updated>
       <workItem from="1643211711703" duration="972000" />
+      <workItem from="1643213005411" duration="44000" />
+      <workItem from="1643213076590" duration="281000" />
     </task>
     <task id="LOCAL-00001" summary="Bring requirements up to date - fix vulnerabilities">
       <created>1643212191571</created>
