@@ -3,7 +3,8 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine
-from passlib.apps import custom_app_context as pwd_context # password hashing
+# from passlib.apps import custom_app_context as pwd_context # password hashing
+from passlib.hash import pbkdf2_sha256 as pwd_context
 
 Base = declarative_base()
 # END of configuration code
@@ -19,7 +20,7 @@ class User(Base):
 	# hashing is a one-way process - we store the hashed password,
 	# and NEVER the actual password.
 	def hash_password(self, password):
-		self.password_hash = pwd_context.encrypt(password)
+		self.password_hash = pwd_context.hash(password)
 
 	# So, to verify it, we take the offered password,
 	# run the hashing process again, and check against the hashed password
