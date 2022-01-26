@@ -62,7 +62,7 @@ and google_client_secret.json
 1. Use databse zips to combine two tables rather than current more convoluted sorting
 1. Add self-populating database to allow for demonstration from initial loading.
 1. Take out debug print statements and put them in a log file.
-1. Add in improved error-handling / reporting. 
+1. Add in improved error-handling & reporting. 
 
 ## Sources used
 - Udacity lecture videos, transcripts and notes
