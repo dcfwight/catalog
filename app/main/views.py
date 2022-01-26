@@ -1,24 +1,29 @@
-import random, string, pprint, json, time, logging, os
+import json
+import logging
+import os
+import random
+import string
+import time
+from pprint import pp
 
+import httplib2  # comprehensive http clientlibrary in python
+import requests
 from flask import render_template, redirect, url_for, request, flash, make_response
 from flask import session as login_session
+# this will catch errors when trying to exchange
+# an authorisation code for an access token.
+from oauth2client.client import AccessTokenCredentials
+# creates a flow objectfrom clientsecrets JSON file.
+# Stores client Id and other oAuth parameters
+from oauth2client.client import FlowExchangeError
+from oauth2client.client import flow_from_clientsecrets
+
 from . import main
 from .forms import NameForm
 from .. import db
 from ..models import User, Category, Item
 
-from oauth2client.client import flow_from_clientsecrets
-# creates a flow objectfrom clientsecrets JSON file.
-# Stores client Id and other oAuth parameters
-from oauth2client.client import FlowExchangeError
-# this will catch errors when trying to exchange
-# an authorisation code for an access token.
-from oauth2client.client import AccessTokenCredentials
 # this is required to fix Oauth error with JSON objects
-
-import httplib2 # comprehensive http clientlibrary in python
-
-import requests
 
 __dir__ = os.path.abspath(os.path.dirname(__name__))
 
@@ -679,7 +684,7 @@ def category_item_json(category, item):
 	items_selected = (session.query(Item).filter_by(name=item).all())
 	for i in items_selected:
 		if i.category_id == category_selected.id:
-			return jsonify(i.serialize)   
+			return jsonify(i.serialize)
 	return ('could not find item {} in category {}'
 			.format(item, category))
 

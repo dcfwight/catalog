@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c667b81a-d414-4d2f-aead-796bce7db023" name="Changes" comment="Bring requirements up to date - fix vulnerabilities">
+    <list default="true" id="c667b81a-d414-4d2f-aead-796bce7db023" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/catalog_project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/catalog_project.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,10 +42,11 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="add_unversioned_files" value="$PROJECT_DIR$/catalog.log" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PythonContentEntriesConfigurable" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunManager">
     <configuration name="catalog_project" type="PythonConfigurationType" factoryName="Python">
@@ -79,7 +82,7 @@
       <updated>1643211709833</updated>
       <workItem from="1643211711703" duration="972000" />
       <workItem from="1643213005411" duration="44000" />
-      <workItem from="1643213076590" duration="281000" />
+      <workItem from="1643213076590" duration="2288000" />
     </task>
     <task id="LOCAL-00001" summary="Bring requirements up to date - fix vulnerabilities">
       <created>1643212191571</created>
@@ -88,7 +91,42 @@
       <option name="project" value="LOCAL" />
       <updated>1643212191571</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Updating packages">
+      <created>1643213460182</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1643213460182</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Updating README">
+      <created>1643214195466</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1643214195466</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Tidy up typos">
+      <created>1643214352958</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1643214352958</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Upgraded all packages">
+      <created>1643214802566</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1643214802566</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Add psycopg2_binary module">
+      <created>1643215182816</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1643215182816</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -107,6 +145,11 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Bring requirements up to date - fix vulnerabilities" />
-    <option name="LAST_COMMIT_MESSAGE" value="Bring requirements up to date - fix vulnerabilities" />
+    <MESSAGE value="Updating packages" />
+    <MESSAGE value="Updating README" />
+    <MESSAGE value="Tidy up typos" />
+    <MESSAGE value="Upgraded all packages" />
+    <MESSAGE value="Add psycopg2_binary module" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add psycopg2_binary module" />
   </component>
 </project>
