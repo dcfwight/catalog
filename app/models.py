@@ -9,73 +9,82 @@ Base = declarative_base()
 # END of configuration code
 
 class User(Base):
-    __tablename__ = 'user'
-    id = Column(Integer, primary_key=True)
-    username = Column(String(256), index=True, nullable=False)
-    password_hash = Column(String(64))
-    email = Column(String(256), nullable=False, unique=True)
-    picture = Column(String(250))
+	__tablename__ = 'user'
+	id = Column(Integer, primary_key=True)
+	username = Column(String(256), index=True, nullable=False)
+	password_hash = Column(String(64))
+	email = Column(String(256), nullable=False, unique=True)
+	picture = Column(String(250))
 
-    # hashing is a one-way process - we store the hashed password,
-    # and NEVER the actual password.
-    def hash_password(self, password):
-        self.password_hash = pwd_context.encrypt(password)
+	# hashing is a one-way process - we store the hashed password,
+	# and NEVER the actual password.
+	def hash_password(self, password):
+		self.password_hash = pwd_context.encrypt(password)
 
-    # So, to verify it, we take the offered password,
-    # run the hashing process again, and check against the hashed password
-    # which is stored.
-    def verify_password(self, password):
-        return pwd_context.verify(password, self.password_hash)	
+	# So, to verify it, we take the offered password,
+	# run the hashing process again, and check against the hashed password
+	# which is stored.
+	def verify_password(self, password):
+		return pwd_context.verify(password, self.password_hash)
+	
+	def __repr__(self):
+		return '<User {}>'.format(self.username)
 
-    @property
-    def serialize(self):
-        """Return object data in easily serializeable format"""
-        return {
-            'id': self.id,
-            'username' : self.name,
-            'password_hash': self.password_hash,
-            'email': self.email
-        }
+	@property
+	def serialize(self):
+		"""Return object data in easily serializeable format"""
+		return {
+			'id': self.id,
+			'username' : self.name,
+			'password_hash': self.password_hash,
+			'email': self.email
+		}
 
 class Category(Base):
-    __tablename__ = 'category'
-    id = Column(Integer, primary_key=True)
-    name = Column(String(32), nullable=False, index=True, unique=True)
-    creator_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
-    
-    
-    @property
-    def serialize(self):
-        """Return object data in easily serializeable format"""
-        return {
-        'id': self.id,
-        'name' : self.name,
-        'creator_id': self.creator_id
-        }
-    
+	__tablename__ = 'category'
+	id = Column(Integer, primary_key=True)
+	name = Column(String(32), nullable=False, index=True, unique=True)
+	creator_id = Column(Integer, ForeignKey('user.id'))
+	user = relationship(User)
+	
+	def __repr__(self):
+		return '<Category {}>'.format(self.name)
+	
+	
+	@property
+	def serialize(self):
+		"""Return object data in easily serializeable format"""
+		return {
+		'id': self.id,
+		'name' : self.name,
+		'creator_id': self.creator_id
+		}
+	
 class Item(Base):
-    __tablename__ = 'item'
-    id = Column(Integer, primary_key=True)
-    name = Column(String(32), nullable=False, index=True)
-    description = Column(String(1024))
-    category_id = Column(Integer, ForeignKey('category.id'))
-    category = relationship(Category)
-    creator_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
-    edited_time = Column(Integer)
+	__tablename__ = 'item'
+	id = Column(Integer, primary_key=True)
+	name = Column(String(32), nullable=False, index=True)
+	description = Column(String(1024))
+	category_id = Column(Integer, ForeignKey('category.id'))
+	category = relationship(Category)
+	creator_id = Column(Integer, ForeignKey('user.id'))
+	user = relationship(User)
+	edited_time = Column(Integer)
+	
+	def __repr__(self):
+		return '<Item {}>'.format(self.name)
 
-    @property
-    def serialize(self):
-        """Return object data in easily serializeable format"""
-        return {
-            'id': self.id,
-            'name' : self.name,
-            'description': self.description,
-            'edited_time': self.edited_time,
-            'category_id': self.category_id,
-            'creator_id': self.creator_id
-        }
+	@property
+	def serialize(self):
+		"""Return object data in easily serializeable format"""
+		return {
+			'id': self.id,
+			'name' : self.name,
+			'description': self.description,
+			'edited_time': self.edited_time,
+			'category_id': self.category_id,
+			'creator_id': self.creator_id
+		}
 
 user = 'dougwight'
 password = 'Linton'
