@@ -16,12 +16,13 @@ Updated to include postgresql
 
 ## Installation
 1. Clone the repository to your local computer.
-1. Install a virtual environment - e.g. `virtualenv venv`.
-1. Activate the virtual environment - e.g. `source venv/bin/activate`
-1. Load the required modules into your virtual environment using requirements.txt - e.g. `pip install -r requirements.txt`
-1. Set up the database with the command line script `$ python3 models.py`
-1. Run the server with the command line script: `$ python3 manage.py runserver -d`
-1. The Flask server will now listen on port 5000. Open a browser and navigate to
+2. Install a virtual environment - e.g. `virtualenv venv`.
+3. Activate the virtual environment - e.g. `source venv/bin/activate`
+4. Make sure pip is up to date with `pip install --upgrade pip`
+5. Load the required modules into your virtual environment using requirements.txt - e.g. `pip install -r requirements.txt`
+6. Set up the database with the command line script `$ python3 models.py`
+7. Run the server with the command line script: `$ python3 manage.py runserver -d`
+8. The Flask server will now listen on port 5000. Open a browser and navigate to
 [http://localhost:5000](http://localhost:5000)
 
 ## Usage
