@@ -5,6 +5,7 @@ from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine
 # from passlib.apps import custom_app_context as pwd_context # password hashing
 from passlib.hash import pbkdf2_sha256 as pwd_context
+import os
 
 Base = declarative_base()
 # END of configuration code
@@ -87,8 +88,8 @@ class Item(Base):
 			'creator_id': self.creator_id
 		}
 
-user = 'dougwight'
-password = 'Linton'
+user = os.environ.get('CATALOG_USER')
+password = os.environ.get('CATALOG_PASS')
 host = 'localhost'
 port = 5432 # default port for postgresql
 database = 'catalog'
