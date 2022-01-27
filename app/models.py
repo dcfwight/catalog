@@ -1,11 +1,16 @@
+# This code sets up a postgresql server.
+import os
+
 # START of configration code
+from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine
+from sqlalchemy_utils import create_database
 # from passlib.apps import custom_app_context as pwd_context # password hashing
 from passlib.hash import pbkdf2_sha256 as pwd_context
-import os
+
 
 Base = declarative_base()
 # END of configuration code
@@ -92,11 +97,17 @@ user = os.environ.get('CATALOG_USER')
 password = os.environ.get('CATALOG_PASS')
 host = 'localhost'
 port = 5432 # default port for postgresql
-database = 'catalog'
+database = os.environ.get('CATALOG_DB')
 
 url = 'postgresql://{}:{}@{}:{}/{}'.format(user,password,host,port,database)
 
-engine = create_engine(url, client_encoding='utf8')
+try:
+	engine = create_engine(url, client_encoding='utf8')
+	# work out if the databases has already been created and, if not, create it
+	if not database_exists(engine.url):
+		create_database(engine.url)
+except:
+	print('Could not connect to postgresql - have you created your user and password in postgresql')
 
 
 # NB - do not delete following line - this shows how to set up a simple sqlite database
