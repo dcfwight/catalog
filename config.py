@@ -1,11 +1,11 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__name__))
 
-USER = 'dougwight'
-PASSWORD = 'Linton'
+USER = os.environ.get('CATALOG_USER')
+PASSWORD = os.environ.get('CATALOG_PASS')
 HOST = 'localhost'
 PORT = 5432 # default port for postgresql
-DATABASE = 'catalog'
+DATABASE = os.environ.get('CATALOG_DB')
 
 class Config:
 	SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string camel176'
