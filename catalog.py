@@ -4,6 +4,7 @@ import pprint
 import json
 import time
 import logging
+import os
 
 from flask import Flask, flash, jsonify, redirect, render_template
 from flask import request, url_for
@@ -46,11 +47,11 @@ logging.basicConfig(filename='catalog.log', level=logging.DEBUG,
 GOOGLE_CLIENT_ID = json.loads(open('google_client_secret.json', 'r')
 							  .read())['web']['client_id']
 
-user = 'dougwight'
-password = 'Linton'
+user = os.environ.get('CATALOG_USER')
+password = os.environ.get('CATALOG_PASS')
 host = 'localhost'
 port = 5432 # default port for postgresql
-database = 'catalog'
+database = os.environ.get('CATLOG_DB')
 
 url = 'postgresql://{}:{}@{}:{}/{}'.format(user,password,host,port,database)
 
